@@ -3,7 +3,6 @@
 namespace Lazy\Http;
 
 use Psr\Http\Client\ClientInterface;
-use Psr\Http\Message\ResponseInterface;
 
 class HttpClient implements ClientInterface
 {
