@@ -6,6 +6,8 @@ use Psr\Http\Client\ClientInterface;
 
 class HttpClient implements ClientInterface
 {
+    const VERSION = '1.0.0';
+
     /**
      * The array of client default options.
      *
@@ -21,6 +23,14 @@ class HttpClient implements ClientInterface
             'max' => 10,
             'strict' => true,
             'referer' => true
+
+        ],
+        'curl' => [
+
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_REFERER => true,
+            CURLOPT_POSTREDIR => 1 | 2
 
         ]
 
