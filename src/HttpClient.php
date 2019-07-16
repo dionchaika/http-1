@@ -33,4 +33,14 @@ class HttpClient implements ClientInterface
         ]
 
     ];
+
+    /**
+     * The client constructor.
+     *
+     * @param  array  $defaultOpts  The array of client default options.
+     */
+    public function __construct(array $defaultOpts = [])
+    {
+        $this->defaultOpts += $defaultOpts;
+    }
 }
