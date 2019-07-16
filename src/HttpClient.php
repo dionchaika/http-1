@@ -17,6 +17,7 @@ class HttpClient implements ClientInterface
 
         'handler' => 'stream',
         'headers' => [],
+        'timeout' => 30.0,
         'redirects' => [
 
             'enable' => true,
@@ -28,11 +29,10 @@ class HttpClient implements ClientInterface
         'cookies' => [
 
             'enable' => true,
-            'file' => null,
-            'jar' => null
+            'jar' => null,
+            'file' => null
 
-        ],
-        'timeout' => 30.0
+        ]
 
     ];
 }
