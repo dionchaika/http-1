@@ -13,6 +13,7 @@ class HttpClient implements ClientInterface
      */
     protected $defaultOpts = [
 
+        'handler' => 'stream',
         'headers' => [],
         'redirects' => [
 
