@@ -4,6 +4,7 @@ namespace Lazy\Http;
 
 use Throwable;
 use InvalidArgumentException;
+use Lazy\Http\Contracts\UriTrait;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -11,84 +12,39 @@ use Psr\Http\Message\UriInterface;
  */
 class Uri implements UriInterface
 {
-    /**
-     * The standart ports.
-     */
-    const STANDART_PORTS = [
-
-        'http'  => 80,
-        'https' => 443
-
-    ];
+    use UriTrait;
 
     /**
-     * The default environments.
-     */
-    const DEFAULT_ENVIRONMENTS = [
-
-        'HTTPS'         => 'off',
-        'PHP_AUTH_PW'   => '',
-        'PHP_AUTH_USER' => '',
-        'QUERY_STRING'  => '',
-        'REQUEST_URI'   => '/',
-        'SERVER_NAME'   => 'localhost',
-        'SERVER_PORT'   => '80'
-
-    ];
-
-    /**
-     * The URI scheme.
-     *
-     * Note: Do not contains a ":" character.
-     *
      * @var string
      */
     protected $scheme = '';
 
     /**
-     * The URI user information.
-     *
-     * Note: Do not contains a "@" character.
-     *
      * @var string
      */
     protected $userInfo = '';
 
     /**
-     * The URI host.
-     *
      * @var string
      */
     protected $host = '';
 
     /**
-     * The URI port.
-     *
      * @var int|null
      */
     protected $port;
 
     /**
-     * The URI path.
-     *
      * @var string
      */
     protected $path = '';
 
     /**
-     * The URI query.
-     *
-     * Note: Do not contains a "?" character.
-     *
      * @var string
      */
     protected $query = '';
 
     /**
-     * The URI fragment.
-     *
-     * Note: Do not contains a "#" character.
-     *
      * @var string
      */
     protected $fragment = '';
@@ -115,17 +71,17 @@ class Uri implements UriInterface
             $userInfo .= ':'.$password;
         }
 
-        $this->scheme = $this->filterScheme($scheme);
+        $this->scheme = $this->validateScheme($scheme);
         $this->userInfo = $userInfo;
-        $this->host = $this->filterHost($host);
-        $this->port = $this->filterPort($port);
-        $this->path = $this->filterPath($path);
-        $this->query = $this->filterQuery($query);
-        $this->fragment = $this->filterFragment($fragment);
+        $this->host = $this->validateHost($host);
+        $this->port = $this->validatePort($port);
+        $this->path = $this->validatePath($path);
+        $this->query = $this->validateQuery($query);
+        $this->fragment = $this->validateFragment($fragment);
     }
 
     /**
-     * Create a new URI from PHP globals.
+     * Create a new URI instance from PHP globals.
      *
      * @return static
      *
@@ -137,7 +93,7 @@ class Uri implements UriInterface
     }
 
     /**
-     * Create a new URI from environments.
+     * Create a new URI instance from environments.
      *
      * @param  array  $environments  The array of environments.
      * @return static
@@ -146,7 +102,7 @@ class Uri implements UriInterface
      */
     public static function fromEnvironments(array $environments)
     {
-        $environments = array_merge(static::DEFAULT_ENVIRONMENTS, $environments);
+        $environments = array_merge($this->defaultEnvironments, $environments);
 
         $scheme = 'off' === $environments['HTTPS'] ? 'http' : 'https';
         $user = $environments['PHP_AUTH_USER'];
@@ -160,7 +116,7 @@ class Uri implements UriInterface
     }
 
     /**
-     * Create a new URI from string.
+     * Create a new URI instance from string.
      *
      * @param  string  $uri  The URI string.
      * @return static
@@ -185,18 +141,6 @@ class Uri implements UriInterface
         $fragment = ! empty($parts['fragment']) ? $parts['fragment'] : '';
 
         return new static($scheme, $user, $password, $host, $port, $path, $query, $fragment);
-    }
-
-    /**
-     * Check is the URI port standard for the given URI scheme.
-     *
-     * @param  string  $scheme  The URI scheme.
-     * @param  int|null  $port  The URI port.
-     * @return bool
-     */
-    public static function isStandartPort($scheme, $port)
-    {
-        return isset(static::STANDART_PORTS[$scheme]) && $port === static::STANDART_PORTS[$scheme];
     }
 
     /**
