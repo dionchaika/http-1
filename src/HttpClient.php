@@ -41,6 +41,6 @@ class HttpClient implements ClientInterface
      */
     public function __construct(array $defaultOpts = [])
     {
-        $this->defaultOpts += $defaultOpts;
+        $this->defaultOpts = array_merge($this->defaultOpts, $defaultOpts);
     }
 }
