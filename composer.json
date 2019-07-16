@@ -3,7 +3,7 @@
     "description": "The Lazy PHP Framework HTTP Component",
     "autoload": {
         "psr-4": {
-            "Lazy\\": "src/"
+            "Lazy\\Http\\": "src/"
         }
     },
     "prefer-stable": true,
