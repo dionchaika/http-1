@@ -25,14 +25,14 @@ class HttpClient implements ClientInterface
             'referer' => true
 
         ],
-        'curl' => [
+        'cookies' => [
 
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_REFERER => true,
-            CURLOPT_POSTREDIR => 1 | 2
+            'enable' => true,
+            'file' => null,
+            'jar' => null
 
-        ]
+        ],
+        'timeout' => 30.0
 
     ];
 }
