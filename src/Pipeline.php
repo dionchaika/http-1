@@ -32,7 +32,8 @@ class Pipeline
     protected $middleware = [];
 
     /**
-     * The method being called on each pipeline HTTP request middleware.
+     * The method being called
+     * on each pipeline HTTP request middleware.
      *
      * @var string
      */
@@ -56,7 +57,7 @@ class Pipeline
     /**
      * Set the array of pipeline HTTP request middleware.
      *
-     * @param  array|mixed  $middleware  The array of pipeline HTTP request middleware.
+     * @param  \Psr\Http\Server\MiddlewareInterface[]|mixed  $middleware  The array of pipeline HTTP request middleware.
      * @return $this
      */
     public function through($middleware)
@@ -69,7 +70,8 @@ class Pipeline
     }
 
     /**
-     * Set the method being called on each pipeline HTTP request middleware.
+     * Set the method being called
+     * on each pipeline HTTP request middleware.
      *
      * @param  string  $method  The method being called on each pipeline HTTP request middleware.
      * @return $this

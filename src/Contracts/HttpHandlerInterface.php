@@ -8,7 +8,7 @@ use Psr\Http\Message\ResponseInterface;
 interface HttpHandlerInterface
 {
     /**
-     * Handle a request and return a response.
+     * Handle an HTTP request and return an HTTP response.
      *
      * @param  \Psr\Http\Message\RequestInterface  $request  The HTTP request.
      * @param  array  $opts  The array of HTTP request options.
