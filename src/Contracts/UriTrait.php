@@ -53,21 +53,45 @@ trait UriTrait
      */
     protected function applyComponent($name, $value)
     {
-        if ('scheme' === $name && $value) {
-            if (! preg_match(static::$schemePattern, $value)) {
+        if ('scheme' === $name) {
+            $value = (string) $value;
+
+            if ($value && ! preg_match(static::$schemePattern, $value)) {
                 $this->throwInvalidComponentException($name, $value);
             }
         }
 
-        if ('port' === $name && null !== $value) {
-            if (1 > $value || 65535 < $value) {
+        if ('port' === $name) {
+            $value = (null === $value) ? $value : (int) $value;
+
+            if (null !== $value && (1 > $value || 65535 < $value)) {
                 $this->throwInvalidComponentException($name, $value);
             }
         }
 
-        if ('path' === $name && $value) {
+        if ('host' === $name) {
+            $value = (string) $value;
+
+            if (preg_match('/^\[(.+)\]$/', $value, $matches)) {
+                if (
+                    ! preg_match('/^v|V[A-Fa-f0-9]\.['.static::$unreserved.static::$subDelims.':]$/', $matches[0]) ||
+                    false === filter_var($matches[0], FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)
+                ) {
+                    $this->throwInvalidComponentException($name, $value);
+                }
+            } else if (
+                false === filter_var($value, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) ||
+                ! preg_match('/^(['.static::$unreserved.static::$subDelims.']|'.static::$pctEncodedPattern.')*$/', $value)
+            ) {
+                $this->throwInvalidComponentException($name, $value);
+            }
+        }
+
+        if ('path' === $name) {
+            $value = (string) $value;
+
             if (
-                ($this->getAuthority() && '/' !== $value[0]) ||
+                ($this->getAuthority() && $value && '/' !== $value[0]) ||
                 (! $this->getAuthority() && '/' === $value[0] && '/' === $value[1]) ||
                 ! preg_match('/^(['.static::$unreserved.static::$subDelims.':@\/]|'.static::$pctEncodedPattern.')*$/', $value)
             ) {
@@ -75,13 +99,17 @@ trait UriTrait
             }
         }
 
-        if ('query' === $name && $value) {
+        if ('query' === $name) {
+            $value = (string) $value;
+
             if (! preg_match('/^(['.static::$unreserved.static::$subDelims.':@\/?]|'.static::$pctEncodedPattern.')*$/', $value)) {
                 $this->throwInvalidComponentException($name, $value);
             }
         }
 
-        if ('fragment' === $name && $value) {
+        if ('fragment' === $name) {
+            $value = (string) $value;
+
             if (! preg_match('/^(['.static::$unreserved.static::$subDelims.':@\/?]|'.static::$pctEncodedPattern.')*$/', $value)) {
                 $this->throwInvalidComponentException($name, $value);
             }
@@ -91,7 +119,7 @@ trait UriTrait
     }
 
     /**
-     * Throw an invalid component of the URI exception.
+     * Throw an exception if the component of the URI is invalid.
      *
      * @param  string  $name
      * @param  mixed  $value
