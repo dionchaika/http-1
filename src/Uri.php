@@ -197,7 +197,7 @@ class Uri implements UriInterface
      */
     public function getPath()
     {
-        return preg_replace_callback('/(?:[^'.static::$unreservedChars.static::$subDelimChars.'\%\:\@\/]++|%(?![a-fA-F0-9]{2}))/', function ($matches) {
+        return preg_replace_callback('/(?:[^'.static::$unreserved.static::$subDelims.'\%\:\@\/]++|%(?![a-fA-F0-9]{2}))/', function ($matches) {
             return rawurlencode($matches[0]);
         }, $this->path);
     }
@@ -207,7 +207,7 @@ class Uri implements UriInterface
      */
     public function getQuery()
     {
-        return preg_replace_callback('/(?:[^'.static::$unreservedChars.static::$subDelimChars.'\%\:\@\/\?]++|%(?![a-fA-F0-9]{2}))/', function ($matches) {
+        return preg_replace_callback('/(?:[^'.static::$unreserved.static::$subDelims.'\%\:\@\/\?]++|%(?![a-fA-F0-9]{2}))/', function ($matches) {
             return rawurlencode($matches[0]);
         }, $this->path);
     }
@@ -217,7 +217,7 @@ class Uri implements UriInterface
      */
     public function getFragment()
     {
-        return preg_replace_callback('/(?:[^'.static::$unreservedChars.static::$subDelimChars.'\%\:\@\/\?]++|%(?![a-fA-F0-9]{2}))/', function ($matches) {
+        return preg_replace_callback('/(?:[^'.static::$unreserved.static::$subDelims.'\%\:\@\/\?]++|%(?![a-fA-F0-9]{2}))/', function ($matches) {
             return rawurlencode($matches[0]);
         }, $this->path);
     }
