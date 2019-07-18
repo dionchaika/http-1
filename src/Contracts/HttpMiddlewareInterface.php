@@ -10,9 +10,10 @@ interface HttpMiddlewareInterface
     /**
      * Process a request and return a response.
      *
-     * @param  \Psr\Http\Message\RequestInterface  $request
-     * @param  \Lazy\Http\Contracts\HttpHandlerInterface|callable  $handler
+     * @param  \Psr\Http\Message\RequestInterface  $request  The HTTP request.
+     * @param  array  $opts  The array of HTTP request options.
+     * @param  \Lazy\Http\Contracts\HttpHandlerInterface|callable  $handler  The next HTTP handler.
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function process(RequestInterface $request, $handler): ResponseInterface;
+    public function process(RequestInterface $request, array $opts = [], $handler): ResponseInterface;
 }
