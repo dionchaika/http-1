@@ -3,10 +3,13 @@
 namespace Lazy\Http;
 
 use InvalidArgumentException;
+use Lazy\Http\Contracts\UriTrait;
 use Psr\Http\Message\UriInterface;
 
 class Uri implements UriInterface
 {
+    use UriTrait;
+
     /**
      * The scheme component of the URI.
      *
@@ -96,7 +99,7 @@ class Uri implements UriInterface
      *
      * @param  string  $uri  The URI string.
      */
-    public function __construct($uri)
+    public function __construct($uri = '')
     {
         $parts = parse_url($uri);
 
@@ -229,7 +232,7 @@ class Uri implements UriInterface
     {
         $clone = clone $this;
 
-        $clone->scheme = $scheme;
+        $clone->scheme = $clone->applyComponent('scheme', $scheme);
 
         return $clone;
     }
