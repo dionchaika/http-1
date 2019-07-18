@@ -25,15 +25,6 @@ trait UriTrait
     protected static $subDelims = '!$&\'()*+,;=';
 
     /**
-     * The URI percent-encoded.
-     *
-     * @var string
-     *
-     * @see https://tools.ietf.org/html/rfc3986#section-2.1
-     */
-    protected static $pctEncoded = '(\%[A-Fa-f0-9]{2})';
-
-    /**
      * The URI unreserved characters.
      *
      * @var string
@@ -41,6 +32,15 @@ trait UriTrait
      * @see https://tools.ietf.org/html/rfc3986#section-2.3
      */
     protected static $unreserved = 'a-zA-Z0-9\-._~';
+
+    /**
+     * The pattern for the URI percent-encoded characters.
+     *
+     * @var string
+     *
+     * @see https://tools.ietf.org/html/rfc3986#section-2.1
+     */
+    protected static $pctEncodedPattern = '(\%[A-Fa-f0-9]{2})';
 
     /**
      * Apply a component to the URI.
