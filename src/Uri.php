@@ -209,7 +209,7 @@ class Uri implements UriInterface
     {
         return preg_replace_callback('/(?:[^'.static::$unreserved.static::$subDelims.'\%\:\@\/\?]++|%(?![a-fA-F0-9]{2}))/', function ($matches) {
             return rawurlencode($matches[0]);
-        }, $this->path);
+        }, $this->query);
     }
 
     /**
@@ -219,7 +219,7 @@ class Uri implements UriInterface
     {
         return preg_replace_callback('/(?:[^'.static::$unreserved.static::$subDelims.'\%\:\@\/\?]++|%(?![a-fA-F0-9]{2}))/', function ($matches) {
             return rawurlencode($matches[0]);
-        }, $this->path);
+        }, $this->fragment);
     }
 
     /**
