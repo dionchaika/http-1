@@ -11,5 +11,5 @@ trait HttpMessageTrait
      *
      * @see https://tools.ietf.org/html/rfc2616#section-4.2
      */
-    protected static $token = '[^\x00-\x20\x7f()<>@,;:\\"\/\[\]?={}]+';
+    protected static $token = '[^\x00-\x20\x7f()<>@,;:\\\"\/\[\]?={}]+';
 }
