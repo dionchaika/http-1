@@ -92,10 +92,33 @@ class Uri implements UriInterface
     protected static $unreserved = 'a-zA-Z0-9\-._~';
 
     /**
+     * Create a new URI instance.
+     *
+     * @param  string  $uri  The URI string.
+     */
+    public function __construct($uri)
+    {
+        $parts = parse_url($uri);
+
+        if (false === $parts) {
+            throw new InvalidArgumentException("Unable to parse the URI: {$uri}!");
+        }
+
+        $this->scheme = ! empty($parts['scheme']) ? $parts['scheme'] : '';
+        $this->user = ! empty($parts['user']) ? $parts['user'] : '';
+        $this->password = ! empty($parts['pass']) ? $parts['pass'] : null;
+        $this->host = ! empty($parts['host']) ? $parts['host'] : '';
+        $this->port = ! empty($parts['port']) ? $this->validatePort($parts['port']) : null;
+        $this->path = ! empty($parts['path']) ? $parts['path'] : '';
+        $this->query = ! empty($parts['query']) ? $parts['query'] : '';
+        $this->fragment = ! empty($parts['fragment']) ? $parts['fragment'] : '';
+    }
+
+    /**
      * Check is the TCP or UDP port is standart for the given scheme.
      *
-     * @param  int  $port
-     * @param  string  $scheme
+     * @param  int  $port  The TCP or UDP port.
+     * @param  string  $scheme  The scheme component of the URI.
      * @return bool
      */
     public static function isStandartPort($port, $scheme)
@@ -241,16 +264,9 @@ class Uri implements UriInterface
      */
     public function withPort($port)
     {
-        if (null !== $port && (1 > $port || 65535 < $port)) {
-            throw new InvalidArgumentException(
-                "Invalid port: {$port}! "
-                ."TCP or UDP port must be between 1 and 65535."
-            );
-        }
-
         $clone = clone $this;
 
-        $clone->port = $port;
+        $clone->port = $this->validatePort($port);
 
         return $clone;
     }
@@ -327,5 +343,23 @@ class Uri implements UriInterface
         }
 
         return $uri;
+    }
+
+    /**
+     * Validate a port component of the URI.
+     *
+     * @param  int|null  $port  The port component of the URI.
+     * @return int|null
+     */
+    protected function validatePort($port)
+    {
+        if (null !== $port && (1 > $port || 65535 < $port)) {
+            throw new InvalidArgumentException(
+                "Invalid port: {$port}! "
+                ."TCP or UDP port must be between 1 and 65535."
+            );
+        }
+
+        return $port;
     }
 }
