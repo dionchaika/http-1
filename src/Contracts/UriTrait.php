@@ -62,9 +62,11 @@ trait UriTrait
         }
 
         if ('port' === $name) {
-            $value = (null === $value) ? $value : (int) $value;
+            if (null !== $value) {
+                $value = (int) $value;
+            }
 
-            if (null !== $value && (1 > $value || 65535 < $value)) {
+            if (is_int($value) && (1 > $value || 65535 < $value)) {
                 $this->throwInvalidComponentException($name, $value);
             }
         }
