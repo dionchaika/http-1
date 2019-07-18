@@ -8,42 +8,58 @@ use Psr\Http\Message\UriInterface;
 class Uri implements UriInterface
 {
     /**
-     * @var string The scheme component of the URI (without ":" character).
+     * The scheme component of the URI.
+     *
+     * @var string
      */
     protected $scheme = '';
 
     /**
-     * @var string The user component of the URI.
+     * The user component of the URI.
+     *
+     * @var string
      */
     protected $user = '';
 
     /**
-     * @var string|null The password component of the URI.
+     * The password component of the URI.
+     *
+     * @var string|null
      */
     protected $password;
 
     /**
-     * @var string The host component of the URI.
+     * The host component of the URI.
+     *
+     * @var string
      */
     protected $host = '';
 
     /**
-     * @var int|null The port component of the URI.
+     * The port component of the URI.
+     *
+     * @var int|null
      */
     protected $port;
 
     /**
-     * @var string The path component of the URI.
+     * The path component of the URI.
+     *
+     * @var string
      */
     protected $path = '';
 
     /**
-     * @var string The query component of the URI (without "?" character).
+     * The query component of the URI.
+     *
+     * @var string
      */
     protected $query = '';
 
     /**
-     * @var string The fragment component of the URI (without "#" character).
+     * The fragment component of the URI.
+     *
+     * @var string
      */
     protected $fragment = '';
 
@@ -66,14 +82,14 @@ class Uri implements UriInterface
      *
      * @var string
      */
-    protected static $subDelimChars = '!$&\'()*+,;=';
+    protected static $subDelims = '!$&\'()*+,;=';
 
     /**
      * The "RFC 3986" unreserved characters.
      *
      * @var string
      */
-    protected static $unreservedChars = 'a-zA-Z0-9\-._~';
+    protected static $unreserved = 'a-zA-Z0-9\-._~';
 
     /**
      * Check is the TCP or UDP port is standart for the given scheme.
@@ -111,7 +127,7 @@ class Uri implements UriInterface
 
             $port = $this->getPort();
 
-            if ($port) {
+            if (null !== $port) {
                 $authority .= ':'.$port;
             }
         }
@@ -147,12 +163,10 @@ class Uri implements UriInterface
     public function getPort()
     {
         if (null === $this->port) {
-            return $this->port;
+            return null;
         }
 
-        $port = (int) $this->port;
-
-        return $this->isStandartPort($port, $this->scheme) ? null : $port;
+        return static::isStandartPort($this->port, $this->scheme) ? null : $this->port;
     }
 
     /**
@@ -227,15 +241,11 @@ class Uri implements UriInterface
      */
     public function withPort($port)
     {
-        if (null !== $port) {
-            $port = $port;
-
-            if (1 > $port || 65535 < $port) {
-                throw new InvalidArgumentException(
-                    "Invalid port: {$port}! "
-                    ."TCP or UDP port must be between 1 and 65535."
-                );
-            }
+        if (null !== $port && (1 > $port || 65535 < $port)) {
+            throw new InvalidArgumentException(
+                "Invalid port: {$port}! "
+                ."TCP or UDP port must be between 1 and 65535."
+            );
         }
 
         $clone = clone $this;
@@ -302,10 +312,8 @@ class Uri implements UriInterface
             $uri .= '//'.$authority;
         }
 
-        if ($authority && 0 !== strpos($path, '/')) {
-            $path = '/'.$path;
-        } else if (! $authority && 0 === strpos($path, '/')) {
-            $path . '/'.ltrim($path, '/');
+        if ($authority || 0 === strpos($path, '/')) {
+            $path = '/'.rtrim($path, '/');
         }
 
         $uri .= $path;
