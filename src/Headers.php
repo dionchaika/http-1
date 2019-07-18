@@ -38,18 +38,18 @@ class Headers
      */
     public function has($name)
     {
-        return isset($this->headers[$this->normalizeName($name)]);
+        return isset($this->headers[strtolower($name)]);
     }
 
     /**
-     * Get the array of header values from the collection.
+     * Get the header value from the collection.
      *
      * @param  string  $name  The header name.
      * @return string[]
      */
     public function get($name)
     {
-        $name = $this->normalizeName($name);
+        $name = strtolower($name);
 
         return isset($this->headers[$name]) ? $this->headers[$name]['value'] : [];
     }
@@ -79,7 +79,7 @@ class Headers
         $name = $this->validateName($name);
         $value = $this->validateValue((array) $value);
 
-        $this->headers[$this->normalizeName($name)] = compact('name', 'value');
+        $this->headers[strtolower($name)] = compact('name', 'value');
 
         return $this;
     }
@@ -98,7 +98,7 @@ class Headers
         $name = $this->validateName($name);
         $value = $this->validateValue((array) $value);
 
-        $normalizedName = $this->normalizeName($name);
+        $normalizedName = strtolower($name);
 
         if (! isset($this->headers[$normalizedName])) {
             $this->headers[$normalizedName] = compact('name', 'value');
@@ -117,20 +117,9 @@ class Headers
      */
     public function remove($name)
     {
-        unset($this->headers[$this->normalizeName($name)]);
+        unset($this->headers[strtolower($name)]);
 
         return $this;
-    }
-
-    /**
-     * Normalize a header name.
-     *
-     * @param  string  $name  The header name.
-     * @return string
-     */
-    protected function normalizeName($name)
-    {
-        return implode('-', array_map('ucfirst', explode('-', strtolower($name))));
     }
 
     /**
