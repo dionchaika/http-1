@@ -242,9 +242,11 @@ class Uri implements UriInterface
      */
     public function withScheme($scheme)
     {
-        $clone = clone $this;
+        $new = clone $this;
 
-        return $clone->applyComponent('scheme', $scheme);
+        $new->applyComponent('scheme', $scheme);
+
+        return $new;
     }
 
     /**
@@ -252,12 +254,12 @@ class Uri implements UriInterface
      */
     public function withUserInfo($user, $password = null)
     {
-        $clone = clone $this;
+        $new = clone $this;
 
-        $clone->user = $user;
-        $clone->password = $user ? $password : null;
+        $new->user = $user;
+        $new->password = $user ? $password : null;
 
-        return $clone;
+        return $new;
     }
 
     /**
@@ -265,9 +267,11 @@ class Uri implements UriInterface
      */
     public function withHost($host)
     {
-        $clone = clone $this;
+        $new = clone $this;
 
-        return $clone->applyComponent('host', $host);
+        $new->applyComponent('host', $host);
+
+        return $new;
     }
 
     /**
@@ -275,9 +279,11 @@ class Uri implements UriInterface
      */
     public function withPort($port)
     {
-        $clone = clone $this;
+        $new = clone $this;
 
-        return $clone->applyComponent('port', $port);
+        $new->applyComponent('port', $port);
+
+        return $new;
     }
 
     /**
@@ -285,9 +291,11 @@ class Uri implements UriInterface
      */
     public function withPath($path)
     {
-        $clone = clone $this;
+        $new = clone $this;
 
-        return $clone->applyComponent('path', $path);
+        $new->applyComponent('path', $path);
+
+        return $new;
     }
 
     /**
@@ -295,9 +303,11 @@ class Uri implements UriInterface
      */
     public function withQuery($query)
     {
-        $clone = clone $this;
+        $new = clone $this;
 
-        return $clone->applyComponent('query', $query);
+        $new->applyComponent('query', $query);
+
+        return $new;
     }
 
     /**
@@ -305,9 +315,11 @@ class Uri implements UriInterface
      */
     public function withFragment($fragment)
     {
-        $clone = clone $this;
+        $new = clone $this;
 
-        return $clone->applyComponent('fragment', $fragment);
+        $new->applyComponent('fragment', $fragment);
+
+        return $new;
     }
 
     /**
