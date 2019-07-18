@@ -139,7 +139,7 @@ class Uri implements UriInterface
      */
     public function getAuthority()
     {
-        $authority = $this->host;
+        $authority = $this->getHost();
 
         if ($authority) {
             $userInfo = $this->getUserInfo();
