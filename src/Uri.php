@@ -3,13 +3,10 @@
 namespace Lazy\Http;
 
 use InvalidArgumentException;
-use Lazy\Http\Contracts\UriTrait;
 use Psr\Http\Message\UriInterface;
 
 class Uri implements UriInterface
 {
-    use UriTrait;
-
     /**
      * The scheme component of the URI.
      *
@@ -81,18 +78,40 @@ class Uri implements UriInterface
     ];
 
     /**
-     * The "RFC 3986" sub-delimiters.
+     * The pattern for the scheme component of the URI.
      *
      * @var string
+     *
+     * @see https://tools.ietf.org/html/rfc3986#section-3.1
+     */
+    protected static $schemePattern = '/^[a-z][a-z0-9+\-.]*$/i';
+
+    /**
+     * The URI sub-delimiters.
+     *
+     * @var string
+     *
+     * @see https://tools.ietf.org/html/rfc3986#section-2.2
      */
     protected static $subDelims = '!$&\'()*+,;=';
 
     /**
-     * The "RFC 3986" unreserved characters.
+     * The URI unreserved characters.
      *
      * @var string
+     *
+     * @see https://tools.ietf.org/html/rfc3986#section-2.3
      */
     protected static $unreserved = 'a-zA-Z0-9\-._~';
+
+    /**
+     * The pattern for the URI percent-encoded characters.
+     *
+     * @var string
+     *
+     * @see https://tools.ietf.org/html/rfc3986#section-2.1
+     */
+    protected static $pctEncodedPattern = '(\%[A-Fa-f0-9]{2})';
 
     /**
      * Create a new URI instance.
@@ -107,14 +126,7 @@ class Uri implements UriInterface
             throw new InvalidArgumentException("Unable to parse the URI: {$uri}!");
         }
 
-        $this->scheme = ! empty($parts['scheme']) ? $parts['scheme'] : '';
-        $this->user = ! empty($parts['user']) ? $parts['user'] : '';
-        $this->password = ! empty($parts['pass']) ? $parts['pass'] : null;
-        $this->host = ! empty($parts['host']) ? $parts['host'] : '';
-        $this->port = ! empty($parts['port']) ? $this->validatePort($parts['port']) : null;
-        $this->path = ! empty($parts['path']) ? $parts['path'] : '';
-        $this->query = ! empty($parts['query']) ? $parts['query'] : '';
-        $this->fragment = ! empty($parts['fragment']) ? $parts['fragment'] : '';
+        //
     }
 
     /**
@@ -200,7 +212,7 @@ class Uri implements UriInterface
      */
     public function getPath()
     {
-        return preg_replace_callback('/(?:[^'.static::$unreserved.static::$subDelims.'\%\:\@\/]++|%(?![a-fA-F0-9]{2}))/', function ($matches) {
+        return preg_replace_callback('/(?:[^'.static::$unreserved.static::$subDelims.'%:@\/]++|%(?![A-Fa-f0-9]{2}))/', function ($matches) {
             return rawurlencode($matches[0]);
         }, $this->path);
     }
@@ -210,7 +222,7 @@ class Uri implements UriInterface
      */
     public function getQuery()
     {
-        return preg_replace_callback('/(?:[^'.static::$unreserved.static::$subDelims.'\%\:\@\/\?]++|%(?![a-fA-F0-9]{2}))/', function ($matches) {
+        return preg_replace_callback('/(?:[^'.static::$unreserved.static::$subDelims.'%:@\/?]++|%(?![A-Fa-f0-9]{2}))/', function ($matches) {
             return rawurlencode($matches[0]);
         }, $this->query);
     }
@@ -220,7 +232,7 @@ class Uri implements UriInterface
      */
     public function getFragment()
     {
-        return preg_replace_callback('/(?:[^'.static::$unreserved.static::$subDelims.'\%\:\@\/\?]++|%(?![a-fA-F0-9]{2}))/', function ($matches) {
+        return preg_replace_callback('/(?:[^'.static::$unreserved.static::$subDelims.'%:@\/?]++|%(?![A-Fa-f0-9]{2}))/', function ($matches) {
             return rawurlencode($matches[0]);
         }, $this->fragment);
     }
@@ -232,9 +244,7 @@ class Uri implements UriInterface
     {
         $clone = clone $this;
 
-        $clone->scheme = $clone->applyComponent('scheme', $scheme);
-
-        return $clone;
+        return $clone->applyComponent('scheme', $scheme);
     }
 
     /**
@@ -257,9 +267,7 @@ class Uri implements UriInterface
     {
         $clone = clone $this;
 
-        $clone->host = $host;
-
-        return $clone;
+        return $clone->applyComponent('host', $host);
     }
 
     /**
@@ -269,9 +277,7 @@ class Uri implements UriInterface
     {
         $clone = clone $this;
 
-        $clone->port = $this->validatePort($port);
-
-        return $clone;
+        return $clone->applyComponent('port', $port);
     }
 
     /**
@@ -281,9 +287,7 @@ class Uri implements UriInterface
     {
         $clone = clone $this;
 
-        $clone->path = $path;
-
-        return $clone;
+        return $clone->applyComponent('path', $path);
     }
 
     /**
@@ -293,9 +297,7 @@ class Uri implements UriInterface
     {
         $clone = clone $this;
 
-        $clone->query = $query;
-
-        return $clone;
+        return $clone->applyComponent('query', $query);
     }
 
     /**
@@ -305,9 +307,7 @@ class Uri implements UriInterface
     {
         $clone = clone $this;
 
-        $clone->fragment = $fragment;
-
-        return $clone;
+        return $clone->applyComponent('fragment', $fragment);
     }
 
     /**
@@ -349,20 +349,94 @@ class Uri implements UriInterface
     }
 
     /**
-     * Validate a port component of the URI.
+     * Apply a component to the URI.
      *
-     * @param  int|null  $port  The port component of the URI.
-     * @return int|null
+     * @param  string  $name
+     * @param  mixed  $value
+     * @return void
+     *
+     * @throws \InvalidArgumentException
      */
-    protected function validatePort($port)
+    protected function applyComponent($name, $value)
     {
-        if (null !== $port && (1 > $port || 65535 < $port)) {
-            throw new InvalidArgumentException(
-                "Invalid port: {$port}! "
-                ."TCP or UDP port must be between 1 and 65535."
-            );
+        if ('scheme' === $name) {
+            $value = (string) $value;
+
+            if ($value && ! preg_match(static::$schemePattern, $value)) {
+                $this->throwInvalidComponentException($name, $value);
+            }
         }
 
-        return $port;
+        if ('port' === $name) {
+            if (null !== $value) {
+                $value = (int) $value;
+            }
+
+            if (is_int($value) && (1 > $value || 65535 < $value)) {
+                $this->throwInvalidComponentException($name, $value);
+            }
+        }
+
+        if ('host' === $name) {
+            $value = (string) $value;
+
+            if (preg_match('/^\[(.+)\]$/', $value, $matches)) {
+                if (
+                    ! preg_match('/^v|V[A-Fa-f0-9]\.['.static::$unreserved.static::$subDelims.':]$/', $matches[0]) ||
+                    false === filter_var($matches[0], FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)
+                ) {
+                    $this->throwInvalidComponentException($name, $value);
+                }
+            } else if (
+                false === filter_var($value, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) ||
+                ! preg_match('/^(['.static::$unreserved.static::$subDelims.']|'.static::$pctEncodedPattern.')*$/', $value)
+            ) {
+                $this->throwInvalidComponentException($name, $value);
+            }
+        }
+
+        if ('path' === $name) {
+            $value = (string) $value;
+
+            if (
+                ($this->getAuthority() && $value && '/' !== $value[0]) ||
+                (! $this->getAuthority() && '/' === $value[0] && '/' === $value[1]) ||
+                ! preg_match('/^(['.static::$unreserved.static::$subDelims.':@\/]|'.static::$pctEncodedPattern.')*$/', $value)
+            ) {
+                $this->throwInvalidComponentException($name, $value);
+            }
+        }
+
+        if ('query' === $name) {
+            $value = (string) $value;
+
+            if (! preg_match('/^(['.static::$unreserved.static::$subDelims.':@\/?]|'.static::$pctEncodedPattern.')*$/', $value)) {
+                $this->throwInvalidComponentException($name, $value);
+            }
+        }
+
+        if ('fragment' === $name) {
+            $value = (string) $value;
+
+            if (! preg_match('/^(['.static::$unreserved.static::$subDelims.':@\/?]|'.static::$pctEncodedPattern.')*$/', $value)) {
+                $this->throwInvalidComponentException($name, $value);
+            }
+        }
+
+        $this->{$name} = $value;
+    }
+
+    /**
+     * Throw an exception if the component of the URI is invalid.
+     *
+     * @param  string  $name
+     * @param  mixed  $value
+     * @return void
+     *
+     * @throws \InvalidArgumentException
+     */
+    protected function throwInvalidComponentException($name, $value)
+    {
+        throw new InvalidArgumentException("Invalid {$name} component of the URI: {$value}!");
     }
 }
