@@ -34,19 +34,19 @@ trait UriTrait
     protected static $unreserved = 'a-zA-Z0-9\-._~';
 
     /**
-     * The pattern for the URI percent-encoded characters.
+     * The pattern for the URI percent-encoded character.
      *
      * @var string
      *
      * @see https://tools.ietf.org/html/rfc3986#section-2.1
      */
-    protected static $pctEncodedPattern = '(\%[A-Fa-f0-9]{2})';
+    protected static $pctEncodedPattern = '\%[A-Fa-f0-9]{2}';
 
     /**
      * Apply a component to the URI.
      *
-     * @param  string  $name
-     * @param  mixed  $value
+     * @param  string  $name  The URI component name.
+     * @param  mixed|null  $value  The URI component value.
      * @return void
      *
      * @throws \InvalidArgumentException
@@ -76,7 +76,7 @@ trait UriTrait
 
             if (preg_match('/^\[(.+)\]$/', $value, $matches)) {
                 if (
-                    ! preg_match('/^v|V[A-Fa-f0-9]\.['.static::$unreserved.static::$subDelims.':]$/', $matches[0]) ||
+                    ! preg_match('/^v[a-f0-9]\.['.static::$unreserved.static::$subDelims.':]$/i', $matches[0]) ||
                     false === filter_var($matches[0], FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)
                 ) {
                     $this->throwInvalidComponentException($name, $value);
