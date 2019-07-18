@@ -65,6 +65,28 @@ trait UriTrait
             }
         }
 
+        if ('path' === $name && $value) {
+            if (
+                ($this->getAuthority() && '/' !== $value[0]) ||
+                (! $this->getAuthority() && '/' === $value[0] && '/' === $value[1]) ||
+                ! preg_match('/^(['.static::$unreserved.static::$subDelims.':@\/]|'.static::$pctEncodedPattern.')*$/', $value)
+            ) {
+                $this->throwInvalidComponentException($name, $value);
+            }
+        }
+
+        if ('query' === $name && $value) {
+            if (! preg_match('/^(['.static::$unreserved.static::$subDelims.':@\/?]|'.static::$pctEncodedPattern.')*$/', $value)) {
+                $this->throwInvalidComponentException($name, $value);
+            }
+        }
+
+        if ('fragment' === $name && $value) {
+            if (! preg_match('/^(['.static::$unreserved.static::$subDelims.':@\/?]|'.static::$pctEncodedPattern.')*$/', $value)) {
+                $this->throwInvalidComponentException($name, $value);
+            }
+        }
+
         $this->{$name} = $value;
     }
 
