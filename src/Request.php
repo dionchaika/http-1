@@ -18,7 +18,7 @@ class Request implements RequestInterface
     /**
      * @var string
      */
-    protected $method;
+    protected $method = 'GET';
 
     /**
      * @var UriInterface
