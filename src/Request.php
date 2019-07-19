@@ -29,6 +29,8 @@ class Request implements RequestInterface
      * The array of standart request methods.
      *
      * @var string[]
+     *
+     * @see https://tools.ietf.org/html/rfc7231#section-4
      */
     protected static $standartMethods = [
 
