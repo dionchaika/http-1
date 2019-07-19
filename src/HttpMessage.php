@@ -3,6 +3,7 @@
 namespace Lazy\Http;
 
 use InvalidArgumentException;
+use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\MessageInterface;
 
 abstract class HttpMessage implements MessageInterface
@@ -67,5 +68,17 @@ abstract class HttpMessage implements MessageInterface
     public function getHeaderLine($name)
     {
         return implode(', ', $this->getHeader($name));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function withoutHeader($name)
+    {
+        $new = clone $this;
+
+        unset($new->headers[strtolower($name)]);
+
+        return $new;
     }
 }
