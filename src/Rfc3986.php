@@ -81,7 +81,7 @@ abstract class Rfc3986
     /**
      * Check is the "IPvFuture" of the host component of the URI valid.
      *
-     * @param  string  $ip  The "IPvFuture" of the host component of the URI
+     * @param  string  $ip  The "IPvFuture" of the host component of the URI.
      * @return bool
      */
     public static function isIpVFutureValid($ip)
@@ -94,7 +94,7 @@ abstract class Rfc3986
     /**
      * Check is the "IPv4address" of the host component of the URI valid.
      *
-     * @param  string  $ip  The "IPv4address" of the host component of the URI
+     * @param  string  $ip  The "IPv4address" of the host component of the URI.
      * @return bool
      */
     public static function isIpV4AddressValid($ip)
@@ -105,7 +105,7 @@ abstract class Rfc3986
     /**
      * Check is the "IPv6address" of the host component of the URI valid.
      *
-     * @param  string  $ip  The "IPv6address" of the host component of the URI
+     * @param  string  $ip  The "IPv6address" of the host component of the URI.
      * @return bool
      */
     public static function isIpV6AddressValid($ip)
