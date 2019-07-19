@@ -48,13 +48,43 @@ class Request implements RequestInterface
      */
     public function __construct($method, $uri)
     {
+        $this->applyMethod($method);
+
         if (is_string($uri)) {
             $uri = new Uri($uri);
         }
 
-        $this->applyMethod($method);
         $this->uri = $uri;
+
         $this->setHostHeaderFromUri();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getRequestTarget()
+    {
+        if ($this->requestTarget) {
+            return (string) $this->requestTarget;
+        }
+
+        $requestTarget = '/'.ltrim($this->getUri()->getPath(), '/');
+
+        $query = $this->getUri()->getQuery();
+
+        return $query ? $requestTarget.'?'.$query : $requestTarget;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function withRequestTarget($requestTarget)
+    {
+        $new = clone $this;
+
+        $new->requestTarget = $requestTarget;
+
+        return $new;
     }
 
     /**
