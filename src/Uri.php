@@ -28,6 +28,34 @@ class Uri implements UriInterface
     ];
 
     /**
+     * @var string
+     *
+     * @see https://tools.ietf.org/html/rfc3986#section-2.1
+     */
+    public static $pctEncoded = '\%[A-Fa-f0-9]{2}';
+
+    /**
+     * @var string
+     *
+     * @see https://tools.ietf.org/html/rfc3986#section-2.2
+     */
+    public static $subDelims = '!$&\'()*+,;=';
+
+    /**
+     * @var string
+     *
+     * @see https://tools.ietf.org/html/rfc3986#section-2.3
+     */
+    public static $unreserved = 'A-Za-z0-9\-._~';
+
+    /**
+     * @var string
+     *
+     * @see https://tools.ietf.org/html/rfc3986#section-3.1
+     */
+    public static $schemePattern = '/^[a-z][a-z0-9+\-.]*$/i';
+
+    /**
      * Check is the TCP or UDP port standart for the given scheme.
      *
      * @param  int  $port  The TCP or UDP port.
@@ -313,31 +341,31 @@ class Uri implements UriInterface
     protected function applyComponent($name, $value)
     {
         if ('scheme' === $name && $value) {
-            if (! Rfc3986::isSchemeValid($value)) {
+            if (! $this->isSchemeValid($value)) {
                 $this->throwInvalidComponentException($name, $value);
             }
         }
 
         if ('host' === $name && $value) {
-            if (! Rfc3986::isHostValid($value)) {
+            if (! $this->isHostValid($value)) {
                 $this->throwInvalidComponentException($name, $value);
             }
         }
 
         if ('port' === $name && is_int($value)) {
-            if (! Rfc3986::isPortValid($value)) {
+            if (! $this->isPortValid($value)) {
                 $this->throwInvalidComponentException($name, $value);
             }
         }
 
         if ('path' === $name && $value) {
-            if (! Rfc3986::isPathValid($value)) {
+            if (! $this->isPathValid($value)) {
                 $this->throwInvalidComponentException($name, $value);
             }
         }
 
         if (('query' === $name || 'fragment' === $name) && $value) {
-            if (! Rfc3986::isQueryOrFragmentValid($value)) {
+            if (! $this->isQueryOrFragmentValid($value)) {
                 $this->throwInvalidComponentException($name, $value);
             }
         }
@@ -357,5 +385,101 @@ class Uri implements UriInterface
     protected function throwInvalidComponentException($name, $value)
     {
         throw new InvalidArgumentException("Invalid {$name} component of the URI: {$value}!");
+    }
+
+    /**
+     * Check is the scheme component of the URI valid.
+     *
+     * @param  string  $scheme  The scheme component of the URI.
+     * @return bool
+     */
+    protected function isSchemeValid($scheme)
+    {
+        return preg_match(static::$schemePattern, $scheme);
+    }
+
+    /**
+     * Check is the host component of the URI valid.
+     *
+     * @param  string  $host  The host component of the URI.
+     * @return bool
+     */
+    protected function isHostValid($host)
+    {
+        return preg_match('/^(['.static::$unreserved.static::$subDelims.']|'.static::$pctEncoded.')*$/', $host) ||
+            static::isIpVFutureValid($host) || static::isIpV4AddressValid($host) || static::isIpV6AddressValid($host);
+    }
+
+    /**
+     * Check is the "IPvFuture" of the host component of the URI valid.
+     *
+     * @param  string  $ip  The "IPvFuture" of the host component of the URI.
+     * @return bool
+     */
+    protected function isIpVFutureValid($ip)
+    {
+        return preg_match(
+            '/^\[v[A-Fa-f0-9]+\.['.static::$unreserved.static::$subDelims.':]+\]$/i', $ip
+        );
+    }
+
+    /**
+     * Check is the "IPv4address" of the host component of the URI valid.
+     *
+     * @param  string  $ip  The "IPv4address" of the host component of the URI.
+     * @return bool
+     */
+    protected function isIpV4AddressValid($ip)
+    {
+        return false !== filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4);
+    }
+
+    /**
+     * Check is the "IPv6address" of the host component of the URI valid.
+     *
+     * @param  string  $ip  The "IPv6address" of the host component of the URI.
+     * @return bool
+     */
+    protected function isIpV6AddressValid($ip)
+    {
+        return '[' === $ip[0] && ']' === $ip[strlen($ip) - 1] &&
+            false !== filter_var(trim($ip, '[]'), FILTER_VALIDATE_IP, FILTER_FLAG_IPV6);
+    }
+
+    /**
+     * Check is the port component of the URI valid.
+     *
+     * @param  int  $port  The port component of the URI.
+     * @return bool
+     */
+    protected function isPortValid($port)
+    {
+        return 0 < $port && 65536 > $port;
+    }
+
+    /**
+     * Check is the path component of the URI valid.
+     *
+     * @param  string  $path  The path component of the URI.
+     * @return bool
+     */
+    protected function isPathValid($path)
+    {
+        return preg_match(
+            '/^(['.static::$unreserved.static::$subDelims.':@\/]|'.static::$pctEncoded.')*$/', $path
+        );
+    }
+
+    /**
+     * Check is the query or fragment component of the URI valid.
+     *
+     * @param  string  $queryOrFragment  The query or fragment component of the URI.
+     * @return bool
+     */
+    protected function isQueryOrFragmentValid($queryOrFragment)
+    {
+        return preg_match(
+            '/^(['.static::$unreserved.static::$subDelims.':@\/?]|'.static::$pctEncoded.')*$/', $queryOrFragment
+        );
     }
 }
