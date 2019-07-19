@@ -41,4 +41,15 @@ abstract class Rfc3986
      * @see https://tools.ietf.org/html/rfc3986#section-3.1
      */
     public static $schemePattern = '/^[a-z][a-z0-9+\-.]*$/i';
+
+    /**
+     * Check is the scheme component of the URI valid.
+     *
+     * @param  string  $scheme  The scheme component of the URI.
+     * @return bool
+     */
+    public static function isSchemeValid($scheme)
+    {
+        return preg_match(static::$schemePattern, $scheme);
+    }
 }
