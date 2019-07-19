@@ -56,8 +56,8 @@ class Uri implements UriInterface
     /**
      * Check is the TCP or UDP port standart for the given scheme.
      *
-     * @param  int  $port  The TCP or UDP port.
-     * @param  string  $scheme  The scheme component of the URI.
+     * @param int $port The TCP or UDP port.
+     * @param string $scheme The scheme component of the URI.
      * @return bool
      */
     protected static function isStandartPort($port, $scheme)
@@ -68,7 +68,7 @@ class Uri implements UriInterface
     /**
      * Check is the scheme component of the URI valid.
      *
-     * @param  string  $scheme  The scheme component of the URI.
+     * @param string $scheme The scheme component of the URI.
      * @return bool
      */
     protected static function isSchemeValid($scheme)
@@ -79,7 +79,7 @@ class Uri implements UriInterface
     /**
      * Check is the host component of the URI valid.
      *
-     * @param  string  $host  The host component of the URI.
+     * @param string $host The host component of the URI.
      * @return bool
      */
     protected static function isHostValid($host)
@@ -102,7 +102,7 @@ class Uri implements UriInterface
     /**
      * Check is the "IPvFuture" of the host component of the URI valid.
      *
-     * @param  string  $ip  The "IPvFuture" of the host component of the URI.
+     * @param string $ip The "IPvFuture" of the host component of the URI.
      * @return bool
      */
     protected static function isIpVFutureValid($ip)
@@ -115,7 +115,7 @@ class Uri implements UriInterface
     /**
      * Check is the "IPv4address" of the host component of the URI valid.
      *
-     * @param  string  $ip  The "IPv4address" of the host component of the URI.
+     * @param string $ip The "IPv4address" of the host component of the URI.
      * @return bool
      */
     protected static function isIpV4AddressValid($ip)
@@ -126,7 +126,7 @@ class Uri implements UriInterface
     /**
      * Check is the "IPv6address" of the host component of the URI valid.
      *
-     * @param  string  $ip  The "IPv6address" of the host component of the URI.
+     * @param string $ip The "IPv6address" of the host component of the URI.
      * @return bool
      */
     protected static function isIpV6AddressValid($ip)
@@ -138,7 +138,7 @@ class Uri implements UriInterface
     /**
      * Check is the port component of the URI valid.
      *
-     * @param  int  $port  The port component of the URI.
+     * @param int $port The port component of the URI.
      * @return bool
      */
     protected static function isPortValid($port)
@@ -149,11 +149,26 @@ class Uri implements UriInterface
     /**
      * Check is the path component of the URI valid.
      *
-     * @param  string  $path  The path component of the URI.
+     * @param string $path The path component of the URI.
+     * @param UriInterface|null $uri The URI instance.
      * @return bool
      */
-    protected static function isPathValid($path)
+    protected static function isPathValid($path, UriInterface $uri = null)
     {
+        if ($uri) {
+            if (! $uri->getScheme() && 0 === strpos($path, ':')) {
+                return false;
+            }
+
+            if ($uri->getAuthority() && 0 !== strpos($path, '/')) {
+                return false;
+            }
+
+            if (! $uri->getAuthority() && 0 === strpos($path, '//')) {
+                return false;
+            }
+        }
+
         return preg_match(
             '/^(['.static::$unreserved.static::$subDelims.':@\/]|'.static::$pctEncoded.')*$/', $path
         );
@@ -162,7 +177,7 @@ class Uri implements UriInterface
     /**
      * Check is the query or fragment component of the URI valid.
      *
-     * @param  string  $queryOrFragment  The query or fragment component of the URI.
+     * @param string $queryOrFragment The query or fragment component of the URI.
      * @return bool
      */
     protected static function isQueryOrFragmentValid($queryOrFragment)
@@ -175,7 +190,7 @@ class Uri implements UriInterface
     /**
      * Create a new URI instance.
      *
-     * @param  string  $uri
+     * @param string $uri
      *
      * @throws \InvalidArgumentException
      */
@@ -423,9 +438,9 @@ class Uri implements UriInterface
     /**
      * Build a user information component of the URI.
      *
-     * @param  string  $user  The user of the user information
+     * @param string $user The user of the user information
      *      component of the URI.
-     * @param  string|null  $password  The password of the user information
+     * @param string|null $password The password of the user information
      *      component of the URI.
      * @return string
      */
@@ -437,8 +452,8 @@ class Uri implements UriInterface
     /**
      * Apply a component to the URI.
      *
-     * @param  string  $name  The URI component name.
-     * @param  mixed  $value  The URI component value.
+     * @param string $name The URI component name.
+     * @param mixed $value The URI component value.
      * @return void
      *
      * @throws \InvalidArgumentException
@@ -464,7 +479,7 @@ class Uri implements UriInterface
         }
 
         if ('path' === $name && $value) {
-            if (! static::isPathValid($value)) {
+            if (! static::isPathValid($value, $this)) {
                 $this->throwInvalidComponentException($name, $value);
             }
         }
@@ -481,8 +496,8 @@ class Uri implements UriInterface
     /**
      * Throw an exception if a URI component is invalid.
      *
-     * @param  string  $name  The URI component name.
-     * @param  mixed  $value  The URI component value.
+     * @param string $name The URI component name.
+     * @param mixed $value The URI component value.
      * @return void
      *
      * @throws \InvalidArgumentException
