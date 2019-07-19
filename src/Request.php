@@ -36,7 +36,11 @@ class Request implements RequestInterface
     {
         $this->applyMethod($method);
 
-        $this->uri = ($uri instanceof UriInterface) ? $uri : new Uri($uri);
+        if (is_string($uri)) {
+            $uri = new Uri($uri);
+        }
+
+        $this->uri = $uri;
 
         $this->setHostHeaderFromUri();
     }
@@ -48,10 +52,10 @@ class Request implements RequestInterface
      */
     protected function setHostHeaderFromUri()
     {
-        $host = $this->uri->getHost();
+        $host = $this->getUri()->getHost();
 
         if ($host) {
-            $port = $this->uri->getPort();
+            $port = $this->getUri()->getPort();
 
             if (null !== $port) {
                 $host .= ':'.$port;
