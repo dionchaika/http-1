@@ -9,8 +9,19 @@ class Request implements RequestInterface
 {
     use Message;
 
+    /**
+     * @var mixed
+     */
     protected $requestTarget;
+
+    /**
+     * @var string
+     */
     protected $method;
+
+    /**
+     * @var UriInterface
+     */
     protected $uri;
 
     /**
@@ -26,5 +37,27 @@ class Request implements RequestInterface
         $this->applyMethod($method);
 
         $this->uri = ($uri instanceof UriInterface) ? $uri : new Uri($uri);
+
+        $this->setHostHeaderFromUri();
+    }
+
+    /**
+     * Set the "Host" header from the URI.
+     *
+     * @return void
+     */
+    protected function setHostHeaderFromUri()
+    {
+        $host = $this->uri->getHost();
+
+        if ($host) {
+            $port = $this->uri->getPort();
+
+            if (null !== $port) {
+                $host .= ':'.$port;
+            }
+
+            $this->headers = ['host' => ['name' => 'Host', 'value' => $host]] + $this->headers;
+        }
     }
 }
