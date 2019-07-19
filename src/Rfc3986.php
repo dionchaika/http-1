@@ -74,12 +74,8 @@ abstract class Rfc3986
      */
     public function isHostValid($host)
     {
-        return static::isIpVFutureValid($host)   ||
-               static::isIpV4AddressValid($host) ||
-               static::isIpV6AddressValid($host) ||
-               preg_match(
-                   '/^(['.static::$unreserved.static::$subDelims.']|'.static::$pctEncoded.')*$/', $host
-               );
+        return preg_match('/^(['.static::$unreserved.static::$subDelims.']|'.static::$pctEncoded.')*$/', $host) ||
+            static::isIpVFutureValid($host) || static::isIpV4AddressValid($host) || static::isIpV6AddressValid($host);
     }
 
     /**
@@ -115,7 +111,7 @@ abstract class Rfc3986
     public static function isIpV6AddressValid($ip)
     {
         return '[' === $ip[0] && ']' === $ip[strlen($ip) - 1] &&
-               false !== filter_var(trim($ip, '[]'), FILTER_VALIDATE_IP, FILTER_FLAG_IPV6);
+            false !== filter_var(trim($ip, '[]'), FILTER_VALIDATE_IP, FILTER_FLAG_IPV6);
     }
 
     /**
