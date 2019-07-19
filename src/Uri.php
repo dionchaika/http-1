@@ -54,14 +54,9 @@ class Uri implements UriInterface
             throw new InvalidArgumentException("Unable to parse the URI: {$uri}!");
         }
 
-        $user = ! empty($parts['user']) ? $parts['user'] : '';
-        $password = ! empty($parts['pass']) ? $parts['pass'] : null;
-
-        $userInfo = $user;
-
-        if ($userInfo && $password) {
-            $userInfo .= ':'.$password;
-        }
+        $userInfo = $this->buildUserInfo(
+            ! empty($parts['user']) ? $parts['user'] : '', ! empty($parts['pass']) ? $parts['pass'] : null
+        );
 
         $this->applyComponent('scheme', ! empty($parts['scheme']) ? $parts['scheme'] : '');
         $this->applyComponent('userInfo', $userInfo);
@@ -70,6 +65,20 @@ class Uri implements UriInterface
         $this->applyComponent('path', ! empty($parts['path']) ? $parts['path'] : '');
         $this->applyComponent('query', ! empty($parts['query']) ? $parts['query'] : '');
         $this->applyComponent('fragment', ! empty($parts['fragment']) ? $parts['fragment'] : '');
+    }
+
+    /**
+     * Build a user information component of the URI.
+     *
+     * @param  string  $user  The user of the user information
+     *      component of the URI.
+     * @param  string|null  $password  The password of the user information
+     *      component of the URI.
+     * @return string
+     */
+    protected function buildUserInfo($user, $password = null)
+    {
+        return ($user && $password) ? $user.':'.$password : $user;
     }
 
     /**
