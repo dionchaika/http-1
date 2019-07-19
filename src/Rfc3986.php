@@ -2,8 +2,6 @@
 
 namespace Lazy\Http;
 
-use Psr\Http\Message\UriInterface;
-
 /**
  * @see https://tools.ietf.org/html/rfc3986
  */
@@ -131,37 +129,10 @@ abstract class Rfc3986
      * Check is the path component of the URI valid.
      *
      * @param  string  $path  The path component of the URI.
-     * @param  \Psr\Http\Message\UriInterface|null  $uri  The URI instance.
      * @return bool
      */
-    public function isPathValid($path, UriInterface $uri = null)
+    public function isPathValid($path)
     {
-        if ($uri && $path) {
-            if (! $uri->getScheme() && ':' === $path[0]) {
-                trigger_error(
-                    'The path component of the URI without a scheme cannot begin with a colon', E_USER_WARNING
-                );
-
-                return false;
-            }
-
-            if (! $uri->getAuthority() && 0 === strpos($path, '//')) {
-                trigger_error(
-                    'The path component of the URI without an authority cannot begin with two slashes.', E_USER_WARNING
-                );
-
-                return false;
-            }
-
-            if ($uri->getAuthority() && 0 !== strpos($path, '/')) {
-                trigger_error(
-                    'The path component of the URI with an authority must be empty or begin with a slash.', E_USER_WARNING
-                );
-
-                return false;
-            }
-        }
-
         return preg_match(
             '/^(['.static::$unreserved.static::$subDelims.':@\/]|'.static::$pctEncoded.')*$/', $path
         );
