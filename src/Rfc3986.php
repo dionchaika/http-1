@@ -107,7 +107,8 @@ abstract class Rfc3986
      */
     public static function isIpV6AddressValid($ip)
     {
-        return '[' === $ip[0] && ']' === $ip[strlen($ip) - 1] && false !== filter_var(trim($ip, '[]'), FILTER_VALIDATE_IP, FILTER_FLAG_IPV6);
+        return '[' === $ip[0] && ']' === $ip[strlen($ip) - 1] &&
+            false !== filter_var(trim($ip, '[]'), FILTER_VALIDATE_IP, FILTER_FLAG_IPV6);
     }
 
     /**
