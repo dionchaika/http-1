@@ -72,7 +72,7 @@ abstract class Rfc3986
      * @param  string  $host  The host component of the URI.
      * @return bool
      */
-    public function isHostValid($host)
+    public static function isHostValid($host)
     {
         return preg_match('/^(['.static::$unreserved.static::$subDelims.']|'.static::$pctEncoded.')*$/', $host) ||
             static::isIpVFutureValid($host) || static::isIpV4AddressValid($host) || static::isIpV6AddressValid($host);
@@ -120,7 +120,7 @@ abstract class Rfc3986
      * @param  int  $port  The port component of the URI.
      * @return bool
      */
-    public function isPortValid($port)
+    public static function isPortValid($port)
     {
         return 0 < $port && 65536 > $port;
     }
@@ -131,7 +131,7 @@ abstract class Rfc3986
      * @param  string  $path  The path component of the URI.
      * @return bool
      */
-    public function isPathValid($path)
+    public static function isPathValid($path)
     {
         return preg_match(
             '/^(['.static::$unreserved.static::$subDelims.':@\/]|'.static::$pctEncoded.')*$/', $path
@@ -144,7 +144,7 @@ abstract class Rfc3986
      * @param  string  $queryOrFragment  The query or fragment component of the URI.
      * @return bool
      */
-    public function isQueryOrFragmentValid($queryOrFragment)
+    public static function isQueryOrFragmentValid($queryOrFragment)
     {
         return preg_match(
             '/^(['.static::$unreserved.static::$subDelims.':@\/?]|'.static::$pctEncoded.')*$/', $queryOrFragment
