@@ -13,6 +13,13 @@ abstract class HttpMessage implements MessageInterface
     protected $body;
 
     /**
+     * @var string
+     *
+     * @see https://tools.ietf.org/html/rfc7230#section-3.2.6
+     */
+    protected static $token = '[!#$%&\'*+\-.^_`|~0-9A-Za-z]+';
+
+    /**
      * {@inheritDoc}
      */
     public function getProtocolVersion()
