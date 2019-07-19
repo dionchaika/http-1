@@ -61,7 +61,9 @@ abstract class Rfc3986
      */
     public static function isUserInfoValid($userInfo)
     {
-        return preg_match('/^(['.static::$unreserved.static::$subDelims.':]|'.static::$pctEncoded.')*$/', $userInfo);
+        return preg_match(
+            '/^(['.static::$unreserved.static::$subDelims.':]|'.static::$pctEncoded.')*$/', $userInfo
+        );
     }
 
     /**
@@ -72,9 +74,12 @@ abstract class Rfc3986
      */
     public function isHostValid($host)
     {
-        return static::isIpVFutureValid($host) ||
-            static::isIpV4AddressValid($host) || static::isIpV6AddressValid($host) ||
-            preg_match('/^(['.static::$unreserved.static::$subDelims.']|'.static::$pctEncoded.')*$/', $host);
+        return static::isIpVFutureValid($host)   ||
+               static::isIpV4AddressValid($host) ||
+               static::isIpV6AddressValid($host) ||
+               preg_match(
+                   '/^(['.static::$unreserved.static::$subDelims.']|'.static::$pctEncoded.')*$/', $host
+               );
     }
 
     /**
@@ -85,7 +90,9 @@ abstract class Rfc3986
      */
     public static function isIpVFutureValid($ip)
     {
-        return preg_match('/^\[v[A-Fa-f0-9]\.['.static::$unreserved.static::$subDelims.':]\]$/i', $ip);
+        return preg_match(
+            '/^\[v[A-Fa-f0-9]\.['.static::$unreserved.static::$subDelims.':]\]$/i', $ip
+        );
     }
 
     /**
@@ -108,7 +115,7 @@ abstract class Rfc3986
     public static function isIpV6AddressValid($ip)
     {
         return '[' === $ip[0] && ']' === $ip[strlen($ip) - 1] &&
-            false !== filter_var(trim($ip, '[]'), FILTER_VALIDATE_IP, FILTER_FLAG_IPV6);
+               false !== filter_var(trim($ip, '[]'), FILTER_VALIDATE_IP, FILTER_FLAG_IPV6);
     }
 
     /**
@@ -142,6 +149,8 @@ abstract class Rfc3986
      */
     public function isQueryOrFragmentValid($queryOrFragment)
     {
-        return preg_match('/^(['.static::$unreserved.static::$subDelims.':@\/?]|'.static::$pctEncoded.')*$/', $queryOrFragment);
+        return preg_match(
+            '/^(['.static::$unreserved.static::$subDelims.':@\/?]|'.static::$pctEncoded.')*$/', $queryOrFragment
+        );
     }
 }
