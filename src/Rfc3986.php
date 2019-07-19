@@ -87,7 +87,7 @@ abstract class Rfc3986
     public static function isIpVFutureValid($ip)
     {
         return preg_match(
-            '/^\[v[A-Fa-f0-9]\.['.static::$unreserved.static::$subDelims.':]\]$/i', $ip
+            '/^\[v[A-Fa-f0-9]+\.['.static::$unreserved.static::$subDelims.':]+\]$/i', $ip
         );
     }
 
