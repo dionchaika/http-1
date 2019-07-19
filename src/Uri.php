@@ -48,7 +48,7 @@ class Uri implements UriInterface
      */
     public function __construct($uri = '')
     {
-        $parts = parse_uri($uri);
+        $parts = parse_url($uri);
 
         if (false === $parts) {
             throw new InvalidArgumentException("Unable to parse the URI: {$uri}!");
@@ -65,6 +65,214 @@ class Uri implements UriInterface
         $this->applyComponent('path', ! empty($parts['path']) ? $parts['path'] : '');
         $this->applyComponent('query', ! empty($parts['query']) ? $parts['query'] : '');
         $this->applyComponent('fragment', ! empty($parts['fragment']) ? $parts['fragment'] : '');
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getScheme()
+    {
+        return strtolower($this->scheme);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getAuthority()
+    {
+        $authority = $this->getHost();
+
+        if ($authority) {
+            $userInfo = $this->getUserInfo();
+
+            if ($userInfo) {
+                $authority = $userInfo.'@'.$authority;
+            }
+
+            $port = $this->getPort();
+
+            if ($port) {
+                $authority .= ':'.$port;
+            }
+        }
+
+        return $authority;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getUserInfo()
+    {
+        return $this->userInfo;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getHost()
+    {
+        return strtolower($this->host);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getPort()
+    {
+        return static::isStandartPort($this->port, $this->scheme) ? null : $this->port;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getPath()
+    {
+        return $this->path;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getQuery()
+    {
+        return $this->query;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getFragment()
+    {
+        return $this->fragment;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function withScheme($scheme)
+    {
+        $new = clone $this;
+
+        $new->applyComponent('scheme', $scheme);
+
+        return $new;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function withUserInfo($user, $password = null)
+    {
+        $new = clone $this;
+
+        $new->applyComponent(
+            'userInfo', $this->buildUserInfo($user, $password)
+        );
+
+        return $new;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function withHost($host)
+    {
+        $new = clone $this;
+
+        $new->applyComponent('host', $host);
+
+        return $new;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function withPort($port)
+    {
+        $new = clone $this;
+
+        $new->applyComponent('port', $port);
+
+        return $new;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function withPath($path)
+    {
+        $new = clone $this;
+
+        $new->applyComponent('path', $path);
+
+        return $new;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function withQuery($query)
+    {
+        $new = clone $this;
+
+        $new->applyComponent('query', $query);
+
+        return $new;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function withFragment($fragment)
+    {
+        $new = clone $this;
+
+        $new->applyComponent('fragment', $fragment);
+
+        return $new;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function __toString()
+    {
+        $scheme = $this->getScheme();
+        $authority = $this->getAuthority();
+        $path = $this->getPath();
+        $query = $this->getQuery();
+        $fragment = $this->getFragment();
+
+        $uri = '';
+
+        if ($scheme) {
+            $uri .= $scheme.':';
+        }
+
+        if ($authority) {
+            $uri .= '//'.$authority;
+        }
+
+        if ($authority) {
+            $path = '/'.ltrim($path, '/');
+        }
+
+        if (! $authority && 0 === strpos($path, '/')) {
+            $path = '/'.ltrim($path, '/');
+        }
+
+        $uri .= $path;
+
+        if ($query) {
+            $uri .= '?'.$query;
+        }
+
+        if ($fragment) {
+            $uri .= '#'.$fragment;
+        }
+
+        return $uri;
     }
 
     /**
