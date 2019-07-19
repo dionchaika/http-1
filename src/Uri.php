@@ -128,7 +128,11 @@ class Uri implements UriInterface
      */
     public function getPath()
     {
-        return $this->path;
+        return preg_replace_callback(
+            '/(?:[^'.Rfc3986::$unreserved.Rfc3986::$subDelims.'%:@\/]++|%(?![A-Fa-f0-9]{2}))/', function ($matches) {
+                return rawurlencode($matches[0]);
+            }, $this->path
+        );
     }
 
     /**
@@ -136,7 +140,11 @@ class Uri implements UriInterface
      */
     public function getQuery()
     {
-        return $this->query;
+        return preg_replace_callback(
+            '/(?:[^'.Rfc3986::$unreserved.Rfc3986::$subDelims.'%:@\/?]++|%(?![A-Fa-f0-9]{2}))/', function ($matches) {
+                return rawurlencode($matches[0]);
+            }, $this->query
+        );
     }
 
     /**
@@ -144,7 +152,11 @@ class Uri implements UriInterface
      */
     public function getFragment()
     {
-        return $this->fragment;
+        return preg_replace_callback(
+            '/(?:[^'.Rfc3986::$unreserved.Rfc3986::$subDelims.'%:@\/?]++|%(?![A-Fa-f0-9]{2}))/', function ($matches) {
+                return rawurlencode($matches[0]);
+            }, $this->fragment
+        );
     }
 
     /**
