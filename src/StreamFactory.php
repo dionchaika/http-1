@@ -10,7 +10,7 @@ use Psr\Http\Message\StreamFactoryInterface;
 class StreamFactory implements StreamFactoryInterface
 {
     /** The readable stream mode pattern. */
-    protected static $readableStreamModePattern = '/^r|r\+|w\+|a\+|x\+|c\+$/';
+    protected static $readableStreamModePattern = '/r|r\+|w\+|a\+|x\+|c\+/';
 
     /** The writable stream mode pattern. */
     protected static $writableStreamModePattern = '/r\+|w|w\+|a|a\+|x|x\+|c|c\+/';
