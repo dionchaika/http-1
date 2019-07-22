@@ -71,7 +71,7 @@ class Uri implements UriInterface
     protected static $unreserved  = 'A-Za-z0-9\-._~';
 
     /**
-     * The "RFC 3986" scheme pattern.
+     * The "RFC 3986" scheme component of the URI pattern.
      *
      * @var string
      */
@@ -280,6 +280,20 @@ class Uri implements UriInterface
      */
     protected static function isPathValid($path, UriInterface $uri = null)
     {
+        if ($uri->getScheme() && 0 === strpos($path, ':')) {
+            return false;
+        }
+
+        $authority = $uri->getAuthority();
+
+        if ($authority && 0 === strpos($path, '//')) {
+            return false;
+        }
+
+        if (! $authority && $path && 0 !== strpos($path, '/')) {
+            return false;
+        }
+
         return preg_match('/^(?:['.static::$unreserved.static::$subDelims.':@\/]|(?:\%[A-Fa-f0-9]{2})*$/', $path);
     }
 

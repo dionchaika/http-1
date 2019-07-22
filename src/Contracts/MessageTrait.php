@@ -2,25 +2,45 @@
 
 namespace Lazy\Http\Contracts;
 
-use Psr\Http\Message\StreamInterface;
 use InvalidArgumentException;
+use Psr\Http\Message\StreamInterface;
 
 trait MessageTrait
 {
-    /** @var string */
+    /**
+     * The protocol version of the message.
+     *
+     * @var string
+     */
     protected $protocolVersion = '1.1';
 
-    /** @var array */
+    /**
+     * The array of message header fields.
+     *
+     * @var array
+     */
     protected $headers = [];
 
-    /** @var StreamInterface */
+    /**
+     * The body of the message.
+     *
+     * @var StreamInterface
+     */
     protected $body;
 
-    /** @var string */
+    /**
+     * The "RFC 2616" token.
+     *
+     * @var string
+     */
     protected static $token = '[!#$%&\'*+\-.^_`|~0-9A-Za-z]+';
 
-    /** @var string */
-    protected static $headerFiledValue = '/^[ \t]*(?:(?:[\x21-\x7e\x80-\xff](?:[ \t]+[\x21-\x7e\x80-\xff])?)|(?:\r\n[ \t]+))*[ \t]*$/';
+    /**
+     * The "RFC 2616" header field value pattern.
+     *
+     * @var string
+     */
+    protected static $valuePattern = '/^[ \t]*(?:(?:[\x21-\x7e\x80-\xff](?:[ \t]+[\x21-\x7e\x80-\xff])?)|(?:\r\n[ \t]+))*[ \t]*$/';
 
     public function getProtocolVersion()
     {
