@@ -2,6 +2,7 @@
 
 namespace Lazy\Http;
 
+use InvalidArgumentException;
 use Psr\Http\Message\UriInterface;
 use Lazy\Http\Contracts\MessageTrait;
 use Psr\Http\Message\RequestInterface;
@@ -19,6 +20,13 @@ class Request implements RequestInterface
     /** @var UriInterface */
     protected $uri;
 
+    /** @var array */
+    protected static $standartMethods = [
+
+        'GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'CONNECT', 'OPTIONS', 'TRACE'
+
+    ];
+
     /**
      * Create a new request instance.
      *
@@ -27,6 +35,8 @@ class Request implements RequestInterface
      */
     public function __construct(string $method, $uri)
     {
+        $this->validateMethod($method);
+
         $this->method = $method;
 
         if (is_string($uri)) {
@@ -120,6 +130,21 @@ class Request implements RequestInterface
             }
 
             $this->headers = ['host' => ['name' => 'Host', 'value' => [$host]]] + $this->headers;
+        }
+    }
+
+    /**
+     * Validate a request method.
+     *
+     * @param string $method
+     * @return void
+     *
+     * @throws \InvalidArgumentException
+     */
+    protected function validateMethod($method)
+    {
+        if (! in_array($method, static::$standartMethods) && ! preg_match('/^'.static::$token.'$/', $method)) {
+            throw new InvalidArgumentException("Method is not valid: {$method}!");
         }
     }
 }

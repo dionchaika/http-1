@@ -8,12 +8,6 @@ use InvalidArgumentException;
 trait MessageTrait
 {
     /** @var string */
-    protected static $token = '[!#$%&\'*+\-.^_`|~0-9A-Za-z]+';
-
-    /** @var string */
-    protected static $headerFiledValue = '/^[ \t]*(?:(?:[\x21-\x7e\x80-\xff](?:[ \t]+[\x21-\x7e\x80-\xff])?)|(?:\r\n[ \t]+))*[ \t]*$/';
-
-    /** @var string */
     protected $protocolVersion = '1.1';
 
     /** @var array */
@@ -21,6 +15,12 @@ trait MessageTrait
 
     /** @var StreamInterface */
     protected $body;
+
+    /** @var string */
+    protected static $token = '[!#$%&\'*+\-.^_`|~0-9A-Za-z]+';
+
+    /** @var string */
+    protected static $headerFiledValue = '/^[ \t]*(?:(?:[\x21-\x7e\x80-\xff](?:[ \t]+[\x21-\x7e\x80-\xff])?)|(?:\r\n[ \t]+))*[ \t]*$/';
 
     public function getProtocolVersion()
     {
@@ -136,9 +136,7 @@ trait MessageTrait
     protected function validateHeaderName($name)
     {
         if (! preg_match('/^'.static::$token.'$/', $name)) {
-            throw new InvalidArgumentException(
-                "Header field name is not valid: {$name}!"
-            );
+            throw new InvalidArgumentException("Header field name is not valid: {$name}!");
         }
     }
 
@@ -154,9 +152,7 @@ trait MessageTrait
     {
         foreach ($value as $val) {
             if (! preg_match(static::$headerFiledValue, $val)) {
-                throw new InvalidArgumentException(
-                    "Header field value is not valid: $val!"
-                );
+                throw new InvalidArgumentException("Header field value is not valid: {$val}!");
             }
         }
     }
