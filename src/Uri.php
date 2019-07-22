@@ -2,7 +2,6 @@
 
 namespace Lazy\Http;
 
-use InvalidArgumentException;
 use Psr\Http\Message\UriInterface;
 
 class Uri implements UriInterface
@@ -57,51 +56,11 @@ class Uri implements UriInterface
     protected $fragment = '';
 
     /**
-     * The "RFC 3986" sub-delimiters.
-     *
-     * @var string
-     */
-    protected static $subDelims = '!$&\'()*+,;=';
-
-    /**
-     * The "RFC 3986" unreserved characters.
-     *
-     * @var string
-     */
-    protected static $unreserved  = 'A-Za-z0-9\-._~';
-
-    /**
-     * The "RFC 3986" scheme component of the URI pattern.
-     *
-     * @var string
-     */
-    protected static $schemePattern = '/^[A-Za-z][A-Za-z0-9+\-.]*$/i';
-
-    /**
      * The array of standart TCP or UDP ports.
      *
      * @var array
      */
     protected static $standartPorts = ['http' => 80, 'https' => 443];
-
-    /**
-     * Create a new URI instance.
-     *
-     * @param string $uri The URI string.
-     *
-     * @throws \InvalidArgumentException If unable to parse
-     *      the URI string or a component of the URI is not valid.
-     */
-    public function __construct(string $uri = '')
-    {
-        $components = parse_url($uri);
-
-        if (false === $components) {
-            throw new InvalidArgumentException("Unable to parse the URI string: {$uri}!");
-        }
-
-        //
-    }
 
     /**
      * {@inheritDoc}
@@ -156,11 +115,7 @@ class Uri implements UriInterface
      */
     public function getPort()
     {
-        if (static::isStandartPortForScheme($this->port, $this->scheme)) {
-            return null;
-        }
-
-        return $this->port;
+        return static::isStandartPortForScheme($this->port, $this->scheme) ? null : $this->port;
     }
 
     /**
@@ -168,9 +123,7 @@ class Uri implements UriInterface
      */
     public function getPath()
     {
-        return preg_replace_callback('/(?:[^'.static::$unreserved.static::$subDelims.'%:@\/]++|%(?![A-Fa-f0-9]{2}))/', function ($matches) {
-            return rawurlencode($matches[0]);
-        }, $this->path);
+        
     }
 
     /**
@@ -178,9 +131,7 @@ class Uri implements UriInterface
      */
     public function getQuery()
     {
-        return preg_replace_callback('/(?:[^'.static::$unreserved.static::$subDelims.'%:@\/?]++|%(?![A-Fa-f0-9]{2}))/', function ($matches) {
-            return rawurlencode($matches[0]);
-        }, $this->query);
+        
     }
 
     /**
@@ -188,9 +139,21 @@ class Uri implements UriInterface
      */
     public function getFragment()
     {
-        return preg_replace_callback('/(?:[^'.static::$unreserved.static::$subDelims.'%:@\/?]++|%(?![A-Fa-f0-9]{2}))/', function ($matches) {
-            return rawurlencode($matches[0]);
-        }, $this->fragment);
+        
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function __toString()
+    {
+        return $this->composeComponents(
+            $this->getScheme(),
+            $this->getAuthority(),
+            $this->getPath(),
+            $this->getQuery(),
+            $this->getFragment()
+        );
     }
 
     /**
@@ -199,7 +162,7 @@ class Uri implements UriInterface
      * @param string $user The URI user.
      * @param string|null $password The URI password.
      *
-     * @return string The composed user information component of the URI.
+     * @return string
      */
     protected function composeUserInfo($user, $password = null)
     {
@@ -207,105 +170,51 @@ class Uri implements UriInterface
     }
 
     /**
-     * Is the TCP or UDP port standart
-     * for the given scheme component of the URI.
+     * Compose the URI components into a string.
+     *
+     * @param string $scheme The scheme component of the URI.
+     * @param string $authority The authority of the URI.
+     * @param string $path The path component of the URI.
+     * @param string $query The query component of the URI.
+     * @param string $fragment The fragment component of the URI.
+     *
+     * @return string
+     */
+    protected function composeComponents($scheme, $authority, $path, $query, $fragment)
+    {
+        $uri = '';
+
+        if ($scheme) {
+            $uri .= $scheme.':';
+        }
+
+        if ($authority) {
+            $uri .= '//'.$authority;
+        }
+
+        $uri .= '/'.ltrim($path, '/');
+
+        if ($query) {
+            $uri .= '?'.$query;
+        }
+
+        if ($fragment) {
+            $uri .= '#'.$fragment;
+        }
+
+        return $uri;
+    }
+
+    /**
+     * Is the TCP or UDP port standart for the given scheme component of the URI.
      *
      * @param int $port The TCP or UDP port.
      * @param string $scheme The scheme component of the URI.
      *
-     * @return bool Returns true
-     *      if the TCP or UDP port standart
-     *      for the given scheme component of the URI.
+     * @return bool
      */
     public static function isStandartPortForScheme($port, $scheme = 'http')
     {
         return isset(static::$standartPorts[$scheme]) && $port === static::$standartPorts[$scheme];
-    }
-
-    /**
-     * Is the scheme component of the URI valid.
-     *
-     * @param string $scheme The scheme component of the URI.
-     *
-     * @return bool Returns true if the scheme component of the URI valid.
-     */
-    protected static function isSchemeValid($scheme)
-    {
-        return preg_match(static::$schemePattern, $scheme);
-    }
-
-    /**
-     * Is the host component of the URI valid.
-     *
-     * @param string $host The host component of the URI.
-     *
-     * @return bool Returns true if the host component of the URI valid.
-     */
-    protected static function isHostValid($host)
-    {
-        if (preg_match('/^\d{1,3}\./', $host)) {
-            return false !== filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4);
-        }
-
-        if (0 === stripos($host, '[v')) {
-            return preg_match('/^\[[Vv][A-Fa-f0-9]+\.['.static::$unreserved.static::$subDelims.':]+\]$/', $host);
-        }
-
-        if (0 === strpos($host, '[')) {
-            return false !== filter_var(trim($host, '[]'), FILTER_VALIDATE_IP, FILTER_FLAG_IPV6);
-        }
-
-        return preg_match('/^(?:['.static::$unreserved.static::$subDelims.']|(?:\%[A-Fa-f0-9]{2})*$/', $host);
-    }
-
-    /**
-     * Is the port component of the URI valid.
-     *
-     * @param int $port The port component of the URI.
-     *
-     * @return bool Returns true if the port component of the URI valid.
-     */
-    protected static function isPortValid($port)
-    {
-        return 0 < $port && 65536 > $port;
-    }
-
-    /**
-     * Is the path component of the URI valid.
-     *
-     * @param string $path The path component of the URI.
-     * @param UriInterface|null $uri The URI instance for the additional validation.
-     *
-     * @return bool Returns true if the path component of the URI valid.
-     */
-    protected static function isPathValid($path, UriInterface $uri = null)
-    {
-        if ($uri->getScheme() && 0 === strpos($path, ':')) {
-            return false;
-        }
-
-        $authority = $uri->getAuthority();
-
-        if ($authority && 0 === strpos($path, '//')) {
-            return false;
-        }
-
-        if (! $authority && $path && 0 !== strpos($path, '/')) {
-            return false;
-        }
-
-        return preg_match('/^(?:['.static::$unreserved.static::$subDelims.':@\/]|(?:\%[A-Fa-f0-9]{2})*$/', $path);
-    }
-
-    /**
-     * Is the query or fragment component of the URI valid.
-     *
-     * @param string $scheme The query or fragment component of the URI.
-     *
-     * @return bool Returns true if the query or fragment component of the URI valid.
-     */
-    protected static function isQueryOrFragmentValid($queryOrFragment)
-    {
-        return preg_match('/^(?:['.static::$unreserved.static::$subDelims.':@\/?]|(?:\%[A-Fa-f0-9]{2})*$/', $queryOrFragment);
     }
 }
