@@ -10,9 +10,6 @@ abstract class Message implements MessageInterface
     /** @var string The HTTP protocol version of the message. */
     protected $protocolVersion = '1.1';
 
-    /** @var StreamInterface The body of the message. */
-    protected $body;
-
     /**
      * The array of message headers.
      *
@@ -24,6 +21,9 @@ abstract class Message implements MessageInterface
      * @var array
      */
     protected $headers = [];
+
+    /** @var StreamInterface The body of the message. */
+    protected $body;
 
     public function getProtocolVersion()
     {
