@@ -27,7 +27,7 @@ class Request implements RequestInterface
      *
      * @throws \InvalidArgumentException
      */
-    public function __construct($method, $uri)
+    public function __construct(string $method, $uri)
     {
         $this->method = $method;
 
