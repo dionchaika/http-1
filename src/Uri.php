@@ -60,7 +60,7 @@ class Uri implements UriInterface
             $userInfo = $this->getUserInfo();
 
             if ($userInfo) {
-                $authority .= $userInfo.'@'.$authority;
+                $authority = $userInfo.'@'.$authority;
             }
 
             $port = $this->getPort();
@@ -101,5 +101,36 @@ class Uri implements UriInterface
     public function getFragment()
     {
         return rawurlencode(rawurldecode($this->fragment));
+    }
+
+    public function __toString()
+    {
+        $scheme = $this->getScheme();
+        $authority = $this->getAuthority();
+        $path = $this->getPath();
+        $query = $this->getQuery();
+        $fragment = $this->getFragment();
+
+        $uri = '';
+
+        if ($scheme) {
+            $uri .= $scheme.':';
+        }
+
+        if ($authority) {
+            $uri .= '//'.$authority;
+        }
+
+        $uri .= $path;
+
+        if ($query) {
+            $uri .= '?'.$query;
+        }
+
+        if ($fragment) {
+            $uri .= '#'.$fragment;
+        }
+
+        return $uri;
     }
 }
