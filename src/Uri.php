@@ -87,7 +87,13 @@ class Uri implements UriInterface
      */
     public function __construct(string $uri = '')
     {
-        
+        $components = parse_url($uri);
+
+        if (false === $components) {
+            throw new InvalidArgumentException("Unable to parse the URI string: {$uri}!");
+        }
+
+        //
     }
 
     /**
@@ -188,5 +194,66 @@ class Uri implements UriInterface
     public static function isStandartPortForScheme($port, $scheme = 'http')
     {
         return isset(static::$standartPorts[$scheme]) && $port === static::$standartPorts[$scheme];
+    }
+
+    /**
+     * Is the scheme component of the URI valid.
+     *
+     * @param string $scheme The scheme component of the URI.
+     *
+     * @return bool Returns true if the scheme component of the URI valid.
+     */
+    protected static function isSchemeValid($scheme)
+    {
+        
+    }
+
+    /**
+     * Is the host component of the URI valid.
+     *
+     * @param string $host The host component of the URI.
+     *
+     * @return bool Returns true if the host component of the URI valid.
+     */
+    protected static function isHostValid($host)
+    {
+        
+    }
+
+    /**
+     * Is the port component of the URI valid.
+     *
+     * @param int $port The port component of the URI.
+     *
+     * @return bool Returns true if the port component of the URI valid.
+     */
+    protected static function isPortValid($port)
+    {
+        
+    }
+
+    /**
+     * Is the path component of the URI valid.
+     *
+     * @param string $path The path component of the URI.
+     * @param UriInterface|null $uri The URI instance for additional validation.
+     *
+     * @return bool Returns true if the path component of the URI valid.
+     */
+    protected static function isPathValid($path, UriInterface $uri = null)
+    {
+        
+    }
+
+    /**
+     * Is the query or fragment component of the URI valid.
+     *
+     * @param string $scheme The query or fragment component of the URI.
+     *
+     * @return bool Returns true if the query or fragment component of the URI valid.
+     */
+    protected static function isQueryOrFragmentValid($queryOrFragment)
+    {
+        
     }
 }
