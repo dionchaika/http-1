@@ -11,7 +11,7 @@ trait MessageTrait
     protected static $token = '[!#$%&\'*+\-.^_`|~0-9A-Za-z]+';
 
     /** @var string */
-    protected static $headerFiledValue = '/^[ \t]*(?:(?:[\x21-\x7e\x80-\xff](?:[ \t]+[\x21-\x7e\x80-\xff])?)|(\r\n[ \t]+))*[ \t]*$/';
+    protected static $headerFiledValue = '/^[ \t]*(?:(?:[\x21-\x7e\x80-\xff](?:[ \t]+[\x21-\x7e\x80-\xff])?)|(?:\r\n[ \t]+))*[ \t]*$/';
 
     /** @var string */
     protected $protocolVersion = '1.1';
@@ -152,10 +152,10 @@ trait MessageTrait
      */
     protected function validateHeaderValue(array $value)
     {
-        foreach ($value as $value) {
-            if (! preg_match(static::$headerFiledValue, $value)) {
+        foreach ($value as $val) {
+            if (! preg_match(static::$headerFiledValue, $val)) {
                 throw new InvalidArgumentException(
-                    "Header field value is not valid: $value!"
+                    "Header field value is not valid: $val!"
                 );
             }
         }
