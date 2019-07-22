@@ -83,6 +83,8 @@ class Request implements RequestInterface
     {
         $new = clone $this;
 
+        $new->validateMethod($method);
+
         $new->method = $method;
 
         return $new;
@@ -128,6 +130,8 @@ class Request implements RequestInterface
             if (null !== $port) {
                 $host .= ':'.$port;
             }
+
+            $this->validateHeaderValue([$host]);
 
             $this->headers = ['host' => ['name' => 'Host', 'value' => [$host]]] + $this->headers;
         }
