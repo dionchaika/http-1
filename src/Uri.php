@@ -71,6 +71,13 @@ class Uri implements UriInterface
     protected static $unreserved  = 'A-Za-z0-9\-._~';
 
     /**
+     * The "RFC 3986" scheme pattern.
+     *
+     * @var string
+     */
+    protected static $schemePattern = '/^[A-Za-z][A-Za-z0-9+\-.]*$/i';
+
+    /**
      * The array of standart TCP or UDP ports.
      *
      * @var array
@@ -161,7 +168,9 @@ class Uri implements UriInterface
      */
     public function getPath()
     {
-        
+        return preg_replace_callback('/(?:[^'.static::$unreserved.static::$subDelims.'%:@\/]++|%(?![A-Fa-f0-9]{2}))/', function ($matches) {
+            return rawurlencode($matches[0]);
+        }, $this->path);
     }
 
     /**
@@ -169,7 +178,9 @@ class Uri implements UriInterface
      */
     public function getQuery()
     {
-        
+        return preg_replace_callback('/(?:[^'.static::$unreserved.static::$subDelims.'%:@\/?]++|%(?![A-Fa-f0-9]{2}))/', function ($matches) {
+            return rawurlencode($matches[0]);
+        }, $this->query);
     }
 
     /**
@@ -177,7 +188,22 @@ class Uri implements UriInterface
      */
     public function getFragment()
     {
-        
+        return preg_replace_callback('/(?:[^'.static::$unreserved.static::$subDelims.'%:@\/?]++|%(?![A-Fa-f0-9]{2}))/', function ($matches) {
+            return rawurlencode($matches[0]);
+        }, $this->fragment);
+    }
+
+    /**
+     * Compose a user information component of the URI.
+     *
+     * @param string $user The URI user.
+     * @param string|null $password The URI password.
+     *
+     * @return string The composed user information component of the URI.
+     */
+    protected function composeUserInfo($user, $password = null)
+    {
+        return ($user && $password) ? $user.':'.$password : $user;
     }
 
     /**
@@ -205,7 +231,7 @@ class Uri implements UriInterface
      */
     protected static function isSchemeValid($scheme)
     {
-        
+        return preg_match(static::$schemePattern, $scheme);
     }
 
     /**
@@ -217,7 +243,19 @@ class Uri implements UriInterface
      */
     protected static function isHostValid($host)
     {
-        
+        if (preg_match('/^\d{1,3}\./', $host)) {
+            return false !== filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4);
+        }
+
+        if (0 === stripos($host, '[v')) {
+            return preg_match('/^\[[Vv][A-Fa-f0-9]+\.['.static::$unreserved.static::$subDelims.':]+\]$/', $host);
+        }
+
+        if (0 === strpos($host, '[')) {
+            return false !== filter_var(trim($host, '[]'), FILTER_VALIDATE_IP, FILTER_FLAG_IPV6);
+        }
+
+        return preg_match('/^(?:['.static::$unreserved.static::$subDelims.']|(?:\%[A-Fa-f0-9]{2})*$/', $host);
     }
 
     /**
@@ -229,20 +267,20 @@ class Uri implements UriInterface
      */
     protected static function isPortValid($port)
     {
-        
+        return 0 < $port && 65536 > $port;
     }
 
     /**
      * Is the path component of the URI valid.
      *
      * @param string $path The path component of the URI.
-     * @param UriInterface|null $uri The URI instance for additional validation.
+     * @param UriInterface|null $uri The URI instance for the additional validation.
      *
      * @return bool Returns true if the path component of the URI valid.
      */
     protected static function isPathValid($path, UriInterface $uri = null)
     {
-        
+        return preg_match('/^(?:['.static::$unreserved.static::$subDelims.':@\/]|(?:\%[A-Fa-f0-9]{2})*$/', $path);
     }
 
     /**
@@ -254,6 +292,6 @@ class Uri implements UriInterface
      */
     protected static function isQueryOrFragmentValid($queryOrFragment)
     {
-        
+        return preg_match('/^(?:['.static::$unreserved.static::$subDelims.':@\/?]|(?:\%[A-Fa-f0-9]{2})*$/', $queryOrFragment);
     }
 }
