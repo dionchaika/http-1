@@ -47,6 +47,16 @@ class Uri implements UriInterface
         return isset(static::$standartPorts[$scheme]) && $port === static::$standartPorts[$scheme];
     }
 
+    /**
+     * Create a new URI instance.
+     *
+     * @param string $uri The URI string.
+     */
+    public function __construct($uri = '')
+    {
+        
+    }
+
     public function getScheme()
     {
         return strtolower($this->scheme);
