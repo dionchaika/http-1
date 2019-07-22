@@ -7,6 +7,9 @@ use Psr\Http\Message\StreamInterface;
 trait MessageTrait
 {
     /** @var string */
+    protected static $token = '/^[!#$%&\'*+\-.^_`|~0-9A-Za-z]+$/';
+
+    /** @var string */
     protected $protocolVersion = '1.1';
 
     /** @var array */
