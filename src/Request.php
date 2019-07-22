@@ -24,8 +24,6 @@ class Request implements RequestInterface
      *
      * @param string $method The request method.
      * @param UriInterface|string $uri The request URI.
-     *
-     * @throws \InvalidArgumentException
      */
     public function __construct(string $method, $uri)
     {
