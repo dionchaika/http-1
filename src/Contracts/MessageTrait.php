@@ -128,7 +128,8 @@ trait MessageTrait
     /**
      * Validate a header field name.
      *
-     * @param string $name
+     * @param string $name The header field name.
+     *
      * @return void
      *
      * @throws \InvalidArgumentException
@@ -143,7 +144,8 @@ trait MessageTrait
     /**
      * Validate a header field value.
      *
-     * @param array $value
+     * @param array $value The header field value.
+     *
      * @return void
      *
      * @throws \InvalidArgumentException

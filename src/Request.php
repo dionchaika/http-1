@@ -32,18 +32,19 @@ class Request implements RequestInterface
      *
      * @param string $method The request method.
      * @param UriInterface|string $uri The request URI.
+     *
+     * @throws \InvalidArgumentException
      */
     public function __construct(string $method, $uri)
     {
         $this->validateMethod($method);
-
-        $this->method = $method;
 
         if (is_string($uri)) {
             //
         }
 
         $this->uri = $uri;
+        $this->method = $method;
 
         if (! $this->hasHeader('host')) {
             $this->setHostHeader($uri);
@@ -117,7 +118,8 @@ class Request implements RequestInterface
     /**
      * Set the "Host" header field from the URI.
      *
-     * @param UriInterface $uri
+     * @param UriInterface $uri The request URI.
+     *
      * @return void
      */
     protected function setHostHeader(UriInterface $uri)
@@ -131,8 +133,6 @@ class Request implements RequestInterface
                 $host .= ':'.$port;
             }
 
-            $this->validateHeaderValue([$host]);
-
             $this->headers = ['host' => ['name' => 'Host', 'value' => [$host]]] + $this->headers;
         }
     }
@@ -140,7 +140,8 @@ class Request implements RequestInterface
     /**
      * Validate a request method.
      *
-     * @param string $method
+     * @param string $method The request method.
+     *
      * @return void
      *
      * @throws \InvalidArgumentException

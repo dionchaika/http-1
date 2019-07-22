@@ -31,6 +31,8 @@ class ServerRequest extends Request implements ServerRequestInterface
      * @param string $method The request method.
      * @param UriInterface|string $uri The request URI.
      * @param array $serverParams The array of SAPI parameters.
+     *
+     * @throws \InvalidArgumentException
      */
     public function __construct(string $method, $uri, array $serverParams = [])
     {

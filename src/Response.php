@@ -2,12 +2,19 @@
 
 namespace Lazy\Http;
 
+use InvalidArgumentException;
 use Lazy\Http\Contracts\MessageTrait;
 use Psr\Http\Message\ResponseInterface;
 
 class Response implements ResponseInterface
 {
     use MessageTrait;
+
+    /** @var int */
+    protected $statusCode = 200;
+
+    /** @var string */
+    protected $reasonPhrase = 'OK';
 
     /** @var array */
     protected static $reasonPhrases = [
@@ -76,22 +83,20 @@ class Response implements ResponseInterface
 
     ];
 
-    /** @var int */
-    protected $statusCode = 200;
-
-    /** @var string */
-    protected $reasonPhrase = 'OK';
-
     /**
      * Create a new response instance.
      *
      * @param int $code The response status code.
      * @param string $reasonPhrase The response reason phrase.
+     *
+     * @throws \InvalidArgumentException
      */
     public function __construct(int $code = 200, string $reasonPhrase = '')
     {
+        $this->validateStatusCode($code);
+
         $this->statusCode = $code;
-        $this->reasonPhrase = $reasonPhrase;
+        $this->reasonPhrase = $reasonPhrase ?: (isset(static::$reasonPhrases[$code]) ? static::$reasonPhrases[$code] : '');
     }
 
     public function getStatusCode()
@@ -104,14 +109,29 @@ class Response implements ResponseInterface
         $new = clone $this;
 
         $new->statusCode = $code;
-        $new->reasonPhrase = $reasonPhrase;
+        $new->reasonPhrase = $reasonPhrase ?: (isset(static::$reasonPhrases[$code]) ? static::$reasonPhrases[$code] : '');
 
         return $new;
     }
 
     public function getReasonPhrase()
     {
-        return isset(static::$reasonPhrases[$this->statusCode])
-            ? static::$reasonPhrases[$this->statusCode] : $this->reasonPhrase;
+        return $this->reasonPhrase;
+    }
+
+    /**
+     * Validate a response status code.
+     *
+     * @param int $code The response status code.
+     *
+     * @return void
+     *
+     * @throws \InvalidArgumentException
+     */
+    protected function validateStatusCode($code)
+    {
+        if (100 > $code || 599 < $code || 306 === $code) {
+            throw new InvalidArgumentException("Status code is not valid: {$code}!");
+        }
     }
 }
