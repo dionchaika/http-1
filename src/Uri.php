@@ -103,6 +103,69 @@ class Uri implements UriInterface
         return rawurlencode(rawurldecode($this->fragment));
     }
 
+    public function withScheme($scheme)
+    {
+        $new = clone $this;
+
+        $new->scheme = $scheme;
+
+        return $new;
+    }
+
+    public function withUserInfo($user, $password = null)
+    {
+        $new = clone $this;
+
+        $new->userInfo = $this->composeUserInfo($user, $password);
+
+        return $new;
+    }
+
+    public function withHost($host)
+    {
+        $new = clone $this;
+
+        $new->host = $host;
+
+        return $new;
+    }
+
+    public function withPort($port)
+    {
+        $new = clone $this;
+
+        $new->port = $port;
+
+        return $new;
+    }
+
+    public function withPath($path)
+    {
+        $new = clone $this;
+
+        $new->path = $path;
+
+        return $new;
+    }
+
+    public function withQuery($query)
+    {
+        $new = clone $this;
+
+        $new->query = $query;
+
+        return $new;
+    }
+
+    public function withFragment($fragment)
+    {
+        $new = clone $this;
+
+        $new->fragment = $fragment;
+
+        return $new;
+    }
+
     public function __toString()
     {
         $scheme = $this->getScheme();
@@ -132,5 +195,23 @@ class Uri implements UriInterface
         }
 
         return $uri;
+    }
+
+    /**
+     * Compose a user information component of the URI.
+     *
+     * @param string $user The user component of the URI.
+     * @param string|null $password The password component of the URI.
+     * @return string
+     */
+    protected function composeUserInfo($user, $password = null)
+    {
+        $userInfo = $user;
+
+        if ($userInfo && $password) {
+            $userInfo .= ':'.$password;
+        }
+
+        return $userInfo;
     }
 }
