@@ -2,6 +2,7 @@
 
 namespace Lazy\Http;
 
+use Lazy\Http\StreamFactory;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\MessageInterface;
 
@@ -97,6 +98,10 @@ abstract class Message implements MessageInterface
 
     public function getBody()
     {
+        if (! $this->body) {
+            $this->body = (new StreamFactory)->createStream();
+        }
+
         return $this->body;
     }
 
