@@ -7,19 +7,10 @@ use Psr\Http\Message\MessageInterface;
 
 abstract class Message implements MessageInterface
 {
-    /** @var string The HTTP protocol version of the message. */
+    /** @var string The protocol version of the message. */
     protected $protocolVersion = '1.1';
 
-    /**
-     * The array of message headers.
-     *
-     * Note: The keys are the normalized
-     * header field names while the values
-     * consist of the original header filed name
-     * and the array of header filed value strings.
-     *
-     * @var array
-     */
+    /** @var array The array of message headers. */
     protected $headers = [];
 
     /** @var StreamInterface The body of the message. */
@@ -38,7 +29,7 @@ abstract class Message implements MessageInterface
 
         return $new;
     }
-    
+
     public function getHeaders()
     {
         $headers = [];
@@ -65,5 +56,42 @@ abstract class Message implements MessageInterface
     public function getHeaderLine($name)
     {
         return implode(', ', $this->getHeader($name));
+    }
+
+    public function withHeader($name, $value)
+    {
+        $value = (array) $value;
+
+        $new = clone $this;
+
+        $new->headers[strtolower($name)] = compact('name', 'value');
+
+        return $new;
+    }
+
+    public function withAddedHeader($name, $value)
+    {
+        $value = (array) $value;
+
+        $normalizedName = strtolower($name);
+
+        $new = clone $this;
+
+        if (isset($new->headers[$normalizedName])) {
+            $new->headers[$normalizedName]['value'] += $value;
+        } else {
+            $new->headers[$normalizedName] = compact('name', 'value');
+        }
+
+        return $new;
+    }
+
+    public function withoutHeader($name)
+    {
+        $new = clone $this;
+
+        unset($new->headers[strtolower($name)]);
+
+        return $new;
     }
 }
