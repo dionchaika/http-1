@@ -57,13 +57,6 @@ class Uri implements UriInterface
     protected $fragment = '';
 
     /**
-     * The array of standart TCP or UDP ports.
-     *
-     * @var array
-     */
-    protected static $standartPorts = ['http' => 80, 'https' => 443];
-
-    /**
      * The "RFC 3986" sub-delimiters.
      *
      * @var string
@@ -76,6 +69,13 @@ class Uri implements UriInterface
      * @var string
      */
     protected static $unreserved  = 'A-Za-z0-9\-._~';
+
+    /**
+     * The array of standart TCP or UDP ports.
+     *
+     * @var array
+     */
+    protected static $standartPorts = ['http' => 80, 'https' => 443];
 
     /**
      * Create a new URI instance.
