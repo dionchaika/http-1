@@ -94,4 +94,18 @@ abstract class Message implements MessageInterface
 
         return $new;
     }
+
+    public function getBody()
+    {
+        return $this->body;
+    }
+
+    public function withBody(StreamInterface $body)
+    {
+        $new = clone $this;
+
+        $new->body = $body;
+
+        return $new;
+    }
 }
