@@ -11,7 +11,7 @@ trait MessageTrait
     protected static $token = '[!#$%&\'*+\-.^_`|~0-9A-Za-z]+';
 
     /** @var string */
-    protected static $headerFiledValue = '/^[ \t]*(?:[\x20-\x7e\x80-\xff](?:[ \t]+[\x20-\x7e\x80-\xff])?)*[ \t]*$/';
+    protected static $headerFiledValue = '/^[ \t]*(?:(?:[\x21-\x7e\x80-\xff](?:[ \t]+[\x21-\x7e\x80-\xff])?)|(\r\n[ \t]+))*[ \t]*$/';
 
     /** @var string */
     protected $protocolVersion = '1.1';
