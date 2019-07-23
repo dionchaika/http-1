@@ -8,27 +8,6 @@ use Psr\Http\Message\StreamInterface;
 trait MessageTrait
 {
     /**
-     * The protocol version of the message.
-     *
-     * @var string
-     */
-    protected $protocolVersion = '1.1';
-
-    /**
-     * The array of message headers.
-     *
-     * @var array
-     */
-    protected $headers = [];
-
-    /**
-     * The body of the message.
-     *
-     * @var StreamInterface
-     */
-    protected $body;
-
-    /**
      * {@inheritDoc}
      */
     public function getProtocolVersion()
@@ -55,7 +34,7 @@ trait MessageTrait
         $headers = [];
 
         foreach ($this->headers as $header) {
-            $headers[$header['name']] = $header['value'];
+            $headers[$header['name']] = $header['values'];
         }
 
         return $headers;
@@ -76,7 +55,7 @@ trait MessageTrait
     {
         $name = strtolower($name);
 
-        return isset($this->headers[$name]) ? $this->headers[$name]['value'] : [];
+        return isset($this->headers[$name]) ? $this->headers[$name]['values'] : [];
     }
 
     /**
@@ -127,54 +106,6 @@ trait MessageTrait
      */
     public function withBody(StreamInterface $body)
     {
-        static::validateMessageBody($body);
-
-        $new = clone $this;
-        $new->body = $body;
-
-        return $new;
-    }
-
-    /**
-     * Validate a header field name.
-     *
-     * @param string A header field name.
-     *
-     * @return void
-     *
-     * @throws InvalidArgumentException
-     */
-    protected static function validateHeaderName($name)
-    {
         
-    }
-
-    /**
-     * Validate a header field value strings.
-     *
-     * @param string An array of header field value strings.
-     *
-     * @return void
-     *
-     * @throws InvalidArgumentException
-     */
-    protected static function validateHeaderStrings(array $strings)
-    {
-        
-    }
-
-    /**
-     * Validate a body of the message.
-     *
-     * @param StreamInterface $body A stream representing
-     *      the body of the HTTP message.
-     *
-     * @return void
-     *
-     * @throws InvalidArgumentException
-     */
-    protected static function validateMessageBody(StreamInterface $body)
-    {
-
     }
 }
