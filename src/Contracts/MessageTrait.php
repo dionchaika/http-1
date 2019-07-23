@@ -34,14 +34,14 @@ trait MessageTrait
      *
      * @var string
      */
-    protected static $headerFieldName = '/^[!#$%&\'*+\-.^_`|~0-9A-Za-z]+$/';
+    protected static $headerName = '/^[!#$%&\'*+\-.^_`|~0-9A-Za-z]+$/';
 
     /**
      * The "RFC 7230" header field value.
      *
      * @var string
      */
-    protected static $headerFieldValue = '/^[ \t]*(?:(?:[\x21-\x7e\x80-\xff](?:[ \t]+[\x21-\x7e\x80-\xff])?)|\r?\n[ \t]+)*[ \t]*$/';
+    protected static $headerValue = '/^[ \t]*(?:(?:[\x21-\x7e\x80-\xff](?:[ \t]+[\x21-\x7e\x80-\xff])?)|\r?\n[ \t]+)*[ \t]*$/';
 
     /**
      * {@inheritDoc}
@@ -165,6 +165,9 @@ trait MessageTrait
     {
         $values = (array) $value;
 
+        $this->validateHeaderName($name);
+        $this->validateHeaderValues($values);
+
         $this->headers[strtolower($name)] = compact('name', 'values');
     }
 
@@ -182,6 +185,9 @@ trait MessageTrait
     {
         $values = (array) $value;
 
+        $this->validateHeaderName($name);
+        $this->validateHeaderValues($values);
+
         $noralizedName = strtolower($name);
 
         if (isset($this->headers[$noralizedName])) {
@@ -189,5 +195,67 @@ trait MessageTrait
         } else {
             $this->headers[$noralizedName] = compact('name', 'values');
         }
+    }
+
+    /**
+     * Validate a header field name.
+     *
+     * @param string $name Header field name.
+     *
+     * @return void
+     *
+     * @throws InvalidArgumentException
+     */
+    protected function validateHeaderName($name)
+    {
+        if (! static::isHeaderNameValid($name)) {
+            throw new InvalidArgumentException(
+                "Header field name is not valid: {$name}!"
+            );
+        }
+    }
+
+    /**
+     * Validate an array of header field values.
+     *
+     * @param string[] $values An array of header field values.
+     *
+     * @return void
+     *
+     * @throws InvalidArgumentException
+     */
+    protected function validateHeaderValues(array $values)
+    {
+        foreach ($values as $value) {
+            if (! static::isHeaderValueValid($value)) {
+                throw new InvalidArgumentException(
+                    "Header field value is not valid: {$value}!"
+                );
+            }
+        }
+    }
+
+    /**
+     * Is a header field name valid.
+     *
+     * @param string $name Header field name.
+     *
+     * @return bool
+     */
+    protected static function isHeaderNameValid($name)
+    {
+        return preg_match(static::$headerName, $name);
+    }
+
+    /**
+     * Is a header field value valid.
+     *
+     * @param string $value Header field value.
+     *
+     * @return bool
+     */
+    protected static function isHeaderValueValid($value)
+    {
+        return preg_match(static::$headerValue, $value);
     }
 }
