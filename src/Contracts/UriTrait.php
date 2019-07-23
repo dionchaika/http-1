@@ -8,13 +8,12 @@ trait UriTrait
 {
     public static function removeDotSegments(UriInterface $uri): UriInterface
     {
-        $input = explode('/', $uri->getPath());
-        $output = [];
+        $input = $uri->getPath(); $output = '';
 
-        while (! empty($input)) {
+        while ('' !== $input) {
             
         }
 
-        return $uri->withPath(implode('/', $output));
+        return $uri->withPath($output);
     }
 }
