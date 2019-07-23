@@ -36,13 +36,13 @@ class Uri implements UriInterface
             ! empty($components['pass']) ? $components['pass'] : null
         );
 
-        $this->applyComponent('scheme', ! empty($components['scheme']) ? $components['scheme'] : '');
-        $this->applyComponent('userInfo', $userInfo);
-        $this->applyComponent('host', ! empty($components['host']) ? $components['host'] : '');
-        $this->applyComponent('port', ! empty($components['port']) ? $components['port'] : null);
-        $this->applyComponent('path', ! empty($components['path']) ? $components['path'] : '');
-        $this->applyComponent('query', ! empty($components['query']) ? $components['query'] : '');
-        $this->applyComponent('fragment', ! empty($components['fragment']) ? $components['fragment'] : '');
+        $this->scheme = static::validateSchemeComponent(! empty($components['scheme']) ? $components['scheme'] : '');
+        $this->userInfo = static::validateUserInfoComponent($userInfo);
+        $this->host = static::validateHostComponent(! empty($components['host']) ? $components['host'] : '');
+        $this->port = static::validatePortComponent(! empty($components['port']) ? $components['port'] : null);
+        $this->path = static::validatePathComponent(! empty($components['path']) ? $components['path'] : '');
+        $this->query = static::validateQueryOrFragmentComponent(! empty($components['query']) ? $components['query'] : '');
+        $this->fragment = static::validateQueryOrFragmentComponent(! empty($components['fragment']) ? $components['fragment'] : '');
     }
 
     public function getScheme()
@@ -83,7 +83,7 @@ class Uri implements UriInterface
 
     public function getPort()
     {
-        return static::isStandartPortForScheme($this->port, $this->scheme) ? null : $this->port;
+        return static::isStandartPort($this->port, $this->scheme) ? null : $this->port;
     }
 
     public function getPath()
@@ -105,7 +105,7 @@ class Uri implements UriInterface
     {
         $new = clone $this;
 
-        $new->applyComponent('scheme', $scheme);
+        $new->scheme = static::validateSchemeComponent($scheme);
 
         return $new;
     }
@@ -114,7 +114,9 @@ class Uri implements UriInterface
     {
         $new = clone $this;
 
-        $new->applyComponent('userInfo', $this->composeUserInfo($user, $password));
+        $new->userInfo = static::validateUserInfoComponent(
+            $this->composeUserInfo($user, $password)
+        );
 
         return $new;
     }
@@ -123,7 +125,7 @@ class Uri implements UriInterface
     {
         $new = clone $this;
 
-        $new->applyComponent('host', $host);
+        $new->host = static::validateHostComponent($host);
 
         return $new;
     }
@@ -132,7 +134,7 @@ class Uri implements UriInterface
     {
         $new = clone $this;
 
-        $new->applyComponent('port', $port);
+        $new->port = static::validatePortComponent($port);
 
         return $new;
     }
@@ -141,7 +143,7 @@ class Uri implements UriInterface
     {
         $new = clone $this;
 
-        $new->applyComponent('path', $path);
+        $new->path = static::validatePathComponent($path);
 
         return $new;
     }
@@ -150,7 +152,7 @@ class Uri implements UriInterface
     {
         $new = clone $this;
 
-        $new->applyComponent('query', $query);
+        $new->query = static::validateQueryOrFragmentComponent($query);
 
         return $new;
     }
@@ -159,40 +161,20 @@ class Uri implements UriInterface
     {
         $new = clone $this;
 
-        $new->applyComponent('fragment', $fragment);
+        $new->fragment = static::validateQueryOrFragmentComponent($fragment);
 
         return $new;
     }
 
     public function __toString()
     {
-        $scheme = $this->getScheme();
-        $authority = $this->getAuthority();
-        $path = $this->getPath();
-        $query = $this->getQuery();
-        $fragment = $this->getFragment();
-
-        $uri = '';
-
-        if ('' !== $scheme) {
-            $uri .= $scheme.':';
-        }
-
-        if ('' !== $authority || 'file' === $scheme) {
-            $uri .= '//'.$authority;
-        }
-
-        $uri .= '/'.ltrim($path, '/');
-
-        if ('' !== $query) {
-            $uri .= '?'.$query;
-        }
-
-        if ('' !== $fragment) {
-            $uri .= '#'.$fragment;
-        }
-
-        return $uri;
+        return static::composeComponents(
+            $this->getScheme(),
+            $this->getAuthority(),
+            $this->getPath(),
+            $this->getQuery(),
+            $this->getFragment()
+        );
     }
 
     protected function composeUserInfo($user, $password = null)
