@@ -15,18 +15,11 @@ class Uri implements UriInterface
     protected $scheme = '';
 
     /**
-     * The user component of the URI.
+     * The user information component of the URI.
      *
      * @var string
      */
-    protected $user = '';
-
-    /**
-     * The password component of the URI.
-     *
-     * @var string|null
-     */
-    protected $password;
+    protected $userInfo = '';
 
     /**
      * The host component of the URI.
