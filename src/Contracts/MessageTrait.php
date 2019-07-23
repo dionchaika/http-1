@@ -3,9 +3,17 @@
 namespace Lazy\Http\Contracts;
 
 use InvalidArgumentException;
+use Psr\Http\Message\StreamInterface;
 
 trait MessageTrait
 {
+    /**
+     * The message body.
+     *
+     * @var StreamInterface
+     */
+    protected $body;
+
     /**
      * The array
      * of message headers.
@@ -13,6 +21,13 @@ trait MessageTrait
      * @var array
      */
     protected $headers = [];
+
+    /**
+     * The message protocol version.
+     *
+     * @var string
+     */
+    protected $protocolVersion = '1.1';
 
     /**
      * The "RFC 7230" header field name.
