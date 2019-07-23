@@ -189,7 +189,7 @@ class Uri implements UriInterface
     public function withPath($path)
     {
         $new = clone $this;
-        $new->components['path'] = static::filterPath($path);
+        $new->components['path'] = static::filterPath($path, $this);
 
         return $new;
     }
