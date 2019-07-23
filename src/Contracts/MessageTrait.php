@@ -8,6 +8,20 @@ use Psr\Http\Message\StreamInterface;
 trait MessageTrait
 {
     /**
+     * The "RFC 7230" header field-name.
+     *
+     * @var string
+     */
+    protected static $fieldName = '/^[!#$%&\'*+\-.^_`|~0-9A-Za-z]+$/';
+
+    /**
+     * The "RFC 7230" header field-value.
+     *
+     * @var string
+     */
+    protected static $fieldValue = '/^[ \t]*(?:(?:[\x21-\x7e\x80-\xff](?:[ \t]+[\x21-\x7e\x80-\xff])?)|\r?\n[ \t]+)*[ \t]*$/';
+
+    /**
      * {@inheritDoc}
      */
     public function getProtocolVersion()
