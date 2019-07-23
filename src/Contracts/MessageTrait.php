@@ -136,6 +136,34 @@ trait MessageTrait
     }
 
     /**
+     * Validate a header field name.
+     *
+     * @param string A header field name.
+     *
+     * @return void
+     *
+     * @throws InvalidArgumentException
+     */
+    protected static function validateHeaderName($name)
+    {
+        
+    }
+
+    /**
+     * Validate a header field value strings.
+     *
+     * @param string An array of header field value strings.
+     *
+     * @return void
+     *
+     * @throws InvalidArgumentException
+     */
+    protected static function validateHeaderStrings(array $strings)
+    {
+        
+    }
+
+    /**
      * Validate a body of the message.
      *
      * @param StreamInterface $body A stream representing
