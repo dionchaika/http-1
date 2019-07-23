@@ -104,7 +104,7 @@ class Uri implements UriInterface
      */
     public function getPort()
     {
-        $standart = $this->isStandartPort(
+        $standart = static::isStandartPort(
             $this->components['port'],
             $this->components['scheme']
         );
@@ -117,7 +117,7 @@ class Uri implements UriInterface
      */
     public function getPath()
     {
-        
+        return static::encodePath($this->components['path']);
     }
 
     /**
@@ -125,7 +125,7 @@ class Uri implements UriInterface
      */
     public function getQuery()
     {
-        
+        return static::encodeQueryOrFragment($this->components['query']);
     }
 
     /**
@@ -133,7 +133,7 @@ class Uri implements UriInterface
      */
     public function getFragment()
     {
-        
+        return static::encodeQueryOrFragment($this->components['fragment']);
     }
 
     /**
@@ -141,7 +141,10 @@ class Uri implements UriInterface
      */
     public function withScheme($scheme)
     {
-        
+        $new = clone $this;
+        $new->components['scheme'] = static::filterScheme($scheme);
+
+        return $new;
     }
 
     /**
@@ -149,7 +152,13 @@ class Uri implements UriInterface
      */
     public function withUserInfo($user, $password = null)
     {
-        
+        $new = clone $this;
+
+        $new->components['userInfo'] = static::filterUserInfo(
+            static::composeUserInfo($user, $password)
+        );
+
+        return $new;
     }
 
     /**
@@ -157,7 +166,10 @@ class Uri implements UriInterface
      */
     public function withHost($host)
     {
-        
+        $new = clone $this;
+        $new->components['host'] = static::filterHost($host);
+
+        return $new;
     }
 
     /**
@@ -165,7 +177,10 @@ class Uri implements UriInterface
      */
     public function withPort($port)
     {
-        
+        $new = clone $this;
+        $new->components['port'] = static::filterPort($port);
+
+        return $new;
     }
 
     /**
@@ -173,7 +188,10 @@ class Uri implements UriInterface
      */
     public function withPath($path)
     {
-        
+        $new = clone $this;
+        $new->components['path'] = static::filterPath($path);
+
+        return $new;
     }
 
     /**
@@ -181,7 +199,10 @@ class Uri implements UriInterface
      */
     public function withQuery($query)
     {
-        
+        $new = clone $this;
+        $new->components['query'] = static::filterQueryOrFragment($query);
+
+        return $new;
     }
 
     /**
@@ -189,7 +210,10 @@ class Uri implements UriInterface
      */
     public function withFragment($fragment)
     {
-        
+        $new = clone $this;
+        $new->components['fragment'] = static::filterQueryOrFragment($fragment);
+
+        return $new;
     }
 
     /**
@@ -197,7 +221,7 @@ class Uri implements UriInterface
      */
     public function __toString()
     {
-        return $this->composeComponents(
+        return static::composeComponents(
             $this->getScheme(),
             $this->getAuthority(),
             $this->getPath(),
@@ -215,7 +239,7 @@ class Uri implements UriInterface
      *
      * @return bool
      */
-    protected function isStandartPort($port, $scheme)
+    protected static function isStandartPort($port, $scheme)
     {
         return isset(static::$standartPorts[$scheme]) && $port === static::$standartPorts[$scheme];
     }
@@ -229,7 +253,7 @@ class Uri implements UriInterface
      *
      * @return string
      */
-    protected function composeUserInfo($user, $password = null)
+    protected static function composeUserInfo($user, $password = null)
     {
         $userInfo = $user;
 
@@ -251,7 +275,7 @@ class Uri implements UriInterface
      *
      * @return string
      */
-    protected function composeComponents($scheme, $authority, $path, $query, $fragment)
+    protected static function composeComponents($scheme, $authority, $path, $query, $fragment)
     {
         $uri = '';
 
