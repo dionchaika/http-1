@@ -56,6 +56,9 @@ class Uri implements UriInterface
      */
     protected $fragment = '';
 
+    const SUB_DELIMS = '!$&\'()*+,;=';
+    const UNRESERVED = 'A-Za-z0-9\-._~';
+
     /**
      * The array of standart TCP and UDP ports.
      *
@@ -87,5 +90,29 @@ class Uri implements UriInterface
     protected function composeUserInfo($user, $password = null)
     {
         return ('' !== $user && null !== $password && '' !== $password) ? $user.':'.$password : $user;
+    }
+
+    /**
+     * Is the scheme component of the URI valid.
+     *
+     * @param string $scheme The scheme component of the URI.
+     *
+     * @return bool Returns true if the scheme component of the URI valid.
+     */
+    protected static function isSchemeValid($scheme)
+    {
+        return preg_match('/^[A-Za-z][A-Za-z0-9+\-.]*$/', $scheme);
+    }
+
+    /**
+     * Is the user information component of the URI valid.
+     *
+     * @param string $userInfo The user information component of the URI.
+     *
+     * @return bool Returns true if the user information component of the URI valid.
+     */
+    protected static function isUserInfoValid($userInfo)
+    {
+        return preg_match('/^(?:['.self::UNRESERVED.self::SUB_DELIMS.':]|\%[A-Fa-f0-9]{2})*$/', $userInfo);
     }
 }
