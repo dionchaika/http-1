@@ -8,11 +8,11 @@ use Psr\Http\Message\StreamInterface;
 trait MessageTrait
 {
     /**
-     * The body of the message.
+     * The protocol version of the message.
      *
-     * @var StreamInterface
+     * @var string
      */
-    protected $body;
+    protected $protocolVersion = '1.1';
 
     /**
      * The array of message headers.
@@ -22,18 +22,18 @@ trait MessageTrait
     protected $headers = [];
 
     /**
-     * The protocol version of the message.
+     * The body of the message.
      *
-     * @var string
+     * @var StreamInterface
      */
-    protected $protocolVersion = '1.1';
+    protected $body;
 
     /**
      * {@inheritDoc}
      */
     public function getProtocolVersion()
     {
-        
+        return $this->protocolVersion;
     }
 
     /**
@@ -41,7 +41,10 @@ trait MessageTrait
      */
     public function withProtocolVersion($version)
     {
-        
+        $new = clone $this;
+        $new->protocolVersion = $version;
+
+        return $new;
     }
 
     /**
@@ -49,7 +52,13 @@ trait MessageTrait
      */
     public function getHeaders()
     {
-        
+        $headers = [];
+
+        foreach ($this->headers as $header) {
+            $headers[$header['name']] = $header['value'];
+        }
+
+        return $headers;
     }
 
     /**
@@ -57,7 +66,7 @@ trait MessageTrait
      */
     public function hasHeader($name)
     {
-        
+        return isset($this->headers[strtolower($name)]);
     }
 
     /**
@@ -65,7 +74,9 @@ trait MessageTrait
      */
     public function getHeader($name)
     {
-        
+        $name = strtolower($name);
+
+        return isset($this->headers[$name]) ? $this->headers[$name]['value'] : [];
     }
 
     /**
@@ -73,7 +84,7 @@ trait MessageTrait
      */
     public function getHeaderLine($name)
     {
-        
+        return implode(', ', $this->getHeader($name));
     }
 
     /**
@@ -97,7 +108,10 @@ trait MessageTrait
      */
     public function withoutHeader($name)
     {
-        
+        $new = clone $this;
+        unset($new->headers[strtolower($name)]);
+
+        return $new;
     }
 
     /**
@@ -113,6 +127,11 @@ trait MessageTrait
      */
     public function withBody(StreamInterface $body)
     {
-        
+        $this->validateMessageBody($body);
+
+        $new = clone $this;
+        $new->body = $body;
+
+        return $new;
     }
 }
