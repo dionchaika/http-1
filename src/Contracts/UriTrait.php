@@ -10,7 +10,14 @@ trait UriTrait
     {
         $path = $uri->getPath();
 
-        
+        $output = [];
+        $input = explode('/', $path);
+
+        while (! empty($input)) {
+            
+        }
+
+        $path = implode('/', $output);
 
         return $uri->withPath($path);
     }
