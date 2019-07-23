@@ -32,7 +32,7 @@ trait UriTrait
      * Is the TCP or UDP port
      * standart for the given scheme component of the URI.
      *
-     * @param int $port The TCP or UDP port.
+     * @param int|null $port The TCP or UDP port.
      * @param string $scheme The scheme component of the URI.
      *
      * @return bool
