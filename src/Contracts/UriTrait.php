@@ -111,27 +111,7 @@ trait UriTrait
             return $host;
         }
 
-        if ('[' === $host[0] && ']' === $host[strlen($host) - 1]) {
-            $host = trim($host);
-
-            if (isset($host[0]) && ('v' === $host[0] || 'V' === $host[0])) {
-                trigger_error('Address mechanism not supported!', E_USER_ERROR);
-            }
-
-            if (false === filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
-                throw new InvalidArgumentException(
-                    "The host component of the URI is not valid: {$host}! Use the correct \"IPv6\" address."
-                );
-            }
-
-            $host = '['.$host.']';
-        } else if (preg_match('/^(?:\d|[\x31-\x39]\d|1\d{2}|2[\x30-\x34]\d|25[\x30-\x35])\./', $host)) {
-            if (false === filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
-                throw new InvalidArgumentException(
-                    "The host component of the URI is not valid: {$host}! Use the correct \"IPv4\" address."
-                );
-            }
-        } else if (! preg_match('/^(?:['.static::$unreserved.static::$subDelims.']|\%[A-Fa-f0-9]{2})*$/', $host)) {
+        if (! preg_match('/^(?:['.static::$unreserved.static::$subDelims.']|\%[A-Fa-f0-9]{2})*$/', $host)) {
             throw new InvalidArgumentException(
                 "The host component of the URI is not valid: {$host}!"
             );
@@ -195,32 +175,6 @@ trait UriTrait
     {
         if ('' === $path) {
             return $path;
-        }
-
-        if (null !== $uri) {
-            $scheme = $uri->getScheme();
-            $authority = $uri->getAuthority();
-
-            if ('' !== $scheme && ':' === $path[0]) {
-                throw new InvalidArgumentException(
-                    "The path component of the URI is not valid: {$path}! "
-                    ."Path of a URI with a scheme component must not begin with a colon."
-                );
-            }
-
-            if ('' !== $authority && '/' !== $path[0]) {
-                throw new InvalidArgumentException(
-                    "The path component of the URI is not valid: {$path}! "
-                    ."Path of a URI with an authority must be empty or begin with a slash."
-                );
-            }
-
-            if ('' === $authority && 0 === strpos($path, '//')) {
-                throw new InvalidArgumentException(
-                    "The path component of the URI is not valid: {$path}! "
-                    ."Path of a URI without an authority must not begin with more than one slash."
-                );
-            }
         }
 
         if (! preg_match('/^(?:[\/'.static::$unreserved.static::$subDelims.':@]|\%[A-Fa-f0-9]{2})*$/', $path)) {
