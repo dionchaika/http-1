@@ -3,10 +3,13 @@
 namespace Lazy\Http;
 
 use InvalidArgumentException;
+use Lazy\Http\Contracts\UriTrait;
 use Psr\Http\Message\UriInterface;
 
 class Uri implements UriInterface
 {
+    use UriTrait;
+
     protected $scheme = '';
     protected $userInfo = '';
     protected $host = '';

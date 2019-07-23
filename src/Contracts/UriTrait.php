@@ -2,6 +2,7 @@
 
 namespace Lazy\Http\Contracts;
 
+use Lazy\Http\Uri;
 use Psr\Http\Message\UriInterface;
 
 trait UriTrait
@@ -83,5 +84,19 @@ trait UriTrait
         }
 
         return implode($output);
+    }
+
+    /**
+     * Transform a URI reference to its target URI against the base URI.
+     *
+     * @param UriInterface $base The base URI.
+     * @param UriInterface $reference The URI reference.
+     * @param bool $strict Use strict mode.
+     *
+     * @return UriInterface The target URI.
+     */
+    public static function transform(UriInterface $base, UriInterface $reference, $strict = true)
+    {
+        
     }
 }
