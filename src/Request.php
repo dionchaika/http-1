@@ -88,6 +88,7 @@ class Request implements RequestInterface
                 $host .= ':'.$port;
             }
 
+            $this->validateHeaderValues([$host]);
             $this->headers = ['host' => ['name' => 'Host', 'values' => [$host]]] + $this->headers;
         }
     }
