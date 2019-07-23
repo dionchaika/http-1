@@ -43,6 +43,52 @@ trait UriTrait
     }
 
     /**
+     * Compose URI components into a string.
+     *
+     * @see https://tools.ietf.org/html/rfc3986#section-5.3
+     *
+     * @param string $scheme The scheme component of the URI.
+     * @param string $authority The URI authority.
+     * @param string $path The path component of the URI.
+     * @param string $query The query component of the URI.
+     * @param string $fragment The fragment component of the URI.
+     *
+     * @return string
+     */
+    public static function composeComponents(
+        $scheme,
+        $authority,
+        $path = '/',
+        $query,
+        $fragment
+    ) {
+        $uri = '';
+
+        if ('' !== $scheme) {
+            $uri .= $scheme.':';
+        }
+
+        if (
+            '' !== $authority ||
+            'file' === $scheme
+        ) {
+            $uri .= '//'.$authority;
+        }
+
+        $uri .= '/'.ltrim($path, '/');
+
+        if ('' !== $query) {
+            $uri .= '?'.$query;
+        }
+
+        if ('' !== $fragment) {
+            $uri .= '#'.$fragment;
+        }
+
+        return $uri;
+    }
+
+    /**
      * Validate a scheme component of the URI.
      *
      * @see https://tools.ietf.org/html/rfc3986#section-3.1
