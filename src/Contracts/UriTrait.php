@@ -58,7 +58,7 @@ trait UriTrait
     public static function composeComponents(
         $scheme,
         $authority,
-        $path = '/',
+        $path,
         $query,
         $fragment
     ) {
