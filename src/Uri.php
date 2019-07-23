@@ -25,7 +25,7 @@ class Uri implements UriInterface
     ];
 
     /**
-     * The URI "file" scheme value.
+     * The "file" URI scheme component value.
      *
      * @var string
      */
