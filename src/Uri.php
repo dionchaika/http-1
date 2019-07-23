@@ -69,10 +69,23 @@ class Uri implements UriInterface
      * @param int $port The TCP or UDP port.
      * @param string $scheme The scheme component of the URI.
      *
-     * @return bool
+     * @return bool Returns true if the TCP or UDP port standart for the given scheme component of the URI.
      */
     public static function isStandartPortForScheme($port, $scheme)
     {
         return isset(static::$standartPorts) && $port === static::$standartPorts[$scheme];
+    }
+
+    /**
+     * Compose a user information component of the URI into a string.
+     *
+     * @param string $user The URI user.
+     * @param string $password The URI password.
+     *
+     * @return string The user information component of the URI as a string.
+     */
+    protected function composeUserInfo($user, $password = null)
+    {
+        return ('' !== $user && null !== $password && '' !== $password) ? $user.':'.$password : $user;
     }
 }
