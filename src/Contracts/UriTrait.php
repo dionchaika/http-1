@@ -45,6 +45,8 @@ trait UriTrait
     /**
      * Validate a scheme component of the URI.
      *
+     * @see https://tools.ietf.org/html/rfc3986#section-3.1
+     *
      * @param string $scheme The scheme component of the URI.
      *
      * @return string
@@ -69,6 +71,8 @@ trait UriTrait
     /**
      * Validate a user information component of the URI.
      *
+     * @see https://tools.ietf.org/html/rfc3986#section-3.2.1
+     *
      * @param string $userInfo The user information component of the URI.
      *
      * @return string
@@ -92,6 +96,8 @@ trait UriTrait
 
     /**
      * Validate a host component of the URI.
+     *
+     * @see https://tools.ietf.org/html/rfc3986#section-3.2.2
      *
      * @param string $host The host component of the URI.
      *
@@ -137,6 +143,8 @@ trait UriTrait
     /**
      * Validate a port component of the URI.
      *
+     * @see https://tools.ietf.org/html/rfc3986#section-3.2.3
+     *
      * @param int|null $port The port component of the URI.
      *
      * @return int|null
@@ -173,6 +181,8 @@ trait UriTrait
 
     /**
      * Validate a path component of the URI.
+     *
+     * @see https://tools.ietf.org/html/rfc3986#section-3.3
      *
      * @param string $path The path component of the URI.
      * @param UriInterface $uri An optional URI instance.
@@ -224,6 +234,9 @@ trait UriTrait
 
     /**
      * Validate a query or a fragment component of the URI.
+     *
+     * @see https://tools.ietf.org/html/rfc3986#section-3.4
+     * @see https://tools.ietf.org/html/rfc3986#section-3.5
      *
      * @param string $queryOrFragment The query or the fragment component of the URI.
      *
