@@ -125,6 +125,33 @@ trait MessageTrait
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function withoutHeader($name)
+    {
+        $new = clone $this;
+        unset($new->headers[strtolower($name)]);
+
+        return $new;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getBody()
+    {
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function withBody(StreamInterface $body)
+    {
+
+    }
+
+    /**
      * Set header to the message.
      *
      * @param string $name Header field name.
