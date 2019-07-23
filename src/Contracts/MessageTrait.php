@@ -2,8 +2,18 @@
 
 namespace Lazy\Http\Contracts;
 
+use InvalidArgumentException;
+
 trait MessageTrait
 {
+    /**
+     * The array
+     * of message headers.
+     *
+     * @var array
+     */
+    protected $headers = [];
+
     /**
      * The "RFC 7230" header field name.
      *
@@ -17,4 +27,44 @@ trait MessageTrait
      * @var string
      */
     protected static $headerFieldValue = '/^[ \t]*(?:(?:[\x21-\x7e\x80-\xff](?:[ \t]+[\x21-\x7e\x80-\xff])?)|\r?\n[ \t]+)*[ \t]*$/';
+
+    /**
+     * Set header to the message.
+     *
+     * @param string $name Header field name.
+     * @param string|string[] $value Header field value(s).
+     *
+     * @return void
+     *
+     * @throws InvalidArgumentException
+     */
+    protected function setHeader($name, $value)
+    {
+        $values = (array) $value;
+
+        $this->headers[strtolower($name)] = compact('name', 'values');
+    }
+
+    /**
+     * Add header to the message.
+     *
+     * @param string $name Header field name.
+     * @param string|string[] $value Header field value(s).
+     *
+     * @return void
+     *
+     * @throws InvalidArgumentException
+     */
+    protected function addHeader($name, $value)
+    {
+        $values = (array) $value;
+
+        $noralizedName = strtolower($name);
+
+        if (isset($this->headers[$noralizedName])) {
+            $this->headers[$noralizedName]['values'] += $values;
+        } else {
+            $this->headers[$noralizedName] = compact('name', 'values');
+        }
+    }
 }
