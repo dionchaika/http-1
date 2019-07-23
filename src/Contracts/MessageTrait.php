@@ -2,8 +2,6 @@
 
 namespace Lazy\Http\Contracts;
 
-use InvalidArgumentException;
-
 trait MessageTrait
 {
     /**
@@ -34,8 +32,6 @@ trait MessageTrait
      * @param array $values An array of header filed values.
      *
      * @return bool
-     *
-     * @throws InvalidArgumentException
      */
     protected static function isHeaderFieldValid($name, array $values)
     {
