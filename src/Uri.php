@@ -101,7 +101,7 @@ class Uri implements UriInterface
      */
     protected static function isSchemeValid($scheme)
     {
-        return preg_match('/^[A-Za-z][A-Za-z0-9+\-.]*$/', $scheme);
+        return '' === $scheme || preg_match('/^[A-Za-z][A-Za-z0-9+\-.]*$/', $scheme);
     }
 
     /**
@@ -113,6 +113,6 @@ class Uri implements UriInterface
      */
     protected static function isUserInfoValid($userInfo)
     {
-        return preg_match('/^(?:['.self::UNRESERVED.self::SUB_DELIMS.':]|\%[A-Fa-f0-9]{2})*$/', $userInfo);
+        return '' === $userInfo || preg_match('/^(?:['.self::UNRESERVED.self::SUB_DELIMS.':]|\%[A-Fa-f0-9]{2})*$/', $userInfo);
     }
 }
