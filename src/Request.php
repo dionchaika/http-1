@@ -65,7 +65,9 @@ class Request implements RequestInterface
         $this->uri = $uri;
         $this->method = $method;
 
-        $this->setHostHeaderFromUri($uri);
+        if (! $this->hasHeader('host')) {
+            $this->setHostHeaderFromUri($uri);
+        }
     }
 
     /**
