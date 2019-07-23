@@ -266,7 +266,7 @@ class Uri implements UriInterface
 
     public static function isStandartPortForScheme($port, $scheme)
     {
-        return isset(static::$standartPorts) && $port === static::$standartPorts[$scheme];
+        return isset(static::$standartPorts[$scheme]) && $port === static::$standartPorts[$scheme];
     }
 
     protected static function isSchemeValid($scheme)
