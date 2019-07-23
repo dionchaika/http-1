@@ -127,11 +127,26 @@ trait MessageTrait
      */
     public function withBody(StreamInterface $body)
     {
-        $this->validateMessageBody($body);
+        static::validateMessageBody($body);
 
         $new = clone $this;
         $new->body = $body;
 
         return $new;
+    }
+
+    /**
+     * Validate a body of the message.
+     *
+     * @param StreamInterface $body A stream representing
+     *      the body of the HTTP message.
+     *
+     * @return void
+     *
+     * @throws InvalidArgumentException
+     */
+    protected static function validateMessageBody(StreamInterface $body)
+    {
+
     }
 }
