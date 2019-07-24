@@ -5,7 +5,7 @@ namespace Lazy\Http;
 use InvalidArgumentException;
 
 /**
- * Filter a URI scheme component as described in "RFC 3986".
+ * Filter a URI scheme component as described in the "RFC 3986".
  *
  * @see https://tools.ietf.org/html/rfc3986#section-3.1
  *
@@ -25,7 +25,7 @@ function filter_uri_scheme($scheme)
 }
 
 /**
- * Filter a URI port component as described in "RFC 3986".
+ * Filter a URI port component as described in the "RFC 3986".
  *
  * @see https://tools.ietf.org/html/rfc3986#section-3.2.3
  *
