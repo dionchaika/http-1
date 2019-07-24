@@ -14,7 +14,7 @@ class Uri implements UriInterface
 
         'scheme' => '',
         'user' => '',
-        'pass' => null,
+        'password' => null,
         'host' => '',
         'port' => null,
         'path' => '',
@@ -54,10 +54,10 @@ class Uri implements UriInterface
 
         if (
             '' !== $userInfo &&
-            null !== $this->components['pass'] &&
-            '' !== $this->components['pass']
+            null !== $this->components['password'] &&
+            '' !== $this->components['password']
         ) {
-            $userInfo .= ':'.$this->components['pass'];
+            $userInfo .= ':'.$this->components['password'];
         }
 
         return $userInfo;
@@ -86,5 +86,94 @@ class Uri implements UriInterface
     public function getFragment()
     {
         return $this->components['fragment'];
+    }
+
+    public function withScheme($scheme)
+    {
+        $uri = clone $this;
+        $uri->components['scheme'] = $scheme;
+
+        return $uri;
+    }
+
+    public function withUserInfo($user, $password = null)
+    {
+        $uri = clone $this;
+
+        $uri->components['user'] = $user;
+        $uri->components['password'] = $password;
+
+        return $uri;
+    }
+
+    public function withHost($host)
+    {
+        $uri = clone $this;
+        $uri->components['host'] = $host;
+
+        return $uri;
+    }
+
+    public function withPort($port)
+    {
+        $uri = clone $this;
+        $uri->components['port'] = $port;
+
+        return $uri;
+    }
+
+    public function withPath($path)
+    {
+        $uri = clone $this;
+        $uri->components['path'] = $path;
+
+        return $uri;
+    }
+
+    public function withQuery($query)
+    {
+        $uri = clone $this;
+        $uri->components['query'] = $query;
+
+        return $uri;
+    }
+
+    public function withFragment($fragment)
+    {
+        $uri = clone $this;
+        $uri->components['fragment'] = $fragment;
+
+        return $uri;
+    }
+
+    public function __toString()
+    {
+        $scheme = $this->getScheme();
+        $authority = $this->getAuthority();
+        $path = $this->getPath();
+        $query = $this->getQuery();
+        $fragment = $this->getFragment();
+
+        $uri = '';
+
+        if ('' !== $scheme) {
+            $uri .= $scheme.':';
+        }
+
+        if ('' !== $authority) {
+            $uri .= '//'.$authority;
+        }
+
+        $uri .= $path;
+
+        if ('' !== $query) {
+            $uri .= '?'.$query;
+        }
+
+        if ('' !== $fragment) {
+            $uri .= '#'.$fragment;
+        }
+
+        return $uri;
     }
 }
