@@ -167,7 +167,7 @@ class Uri implements UriInterface
         $uri = clone $this;
 
         $uri->components['path'] = filter_uri_path(
-            $path, $this->getScheme(), $this->getUserInfo()
+            $path, $this->getScheme(), $this->getAuthority()
         );
 
         return $uri;
