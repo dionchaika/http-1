@@ -39,7 +39,7 @@ function filter_uri_port($port)
         return $port;
     }
 
-    trigger_error('TCP or UDP port must be between 1 and 65535!');
+    trigger_error('TCP or UDP port must be between 1 and 65535.');
 
     throw new InvalidArgumentException("URI port component is not valid: {$port}!");
 }
