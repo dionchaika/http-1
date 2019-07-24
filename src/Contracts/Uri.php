@@ -6,6 +6,12 @@ namespace Lazy\Http;
 
 use Psr\Http\Message\UriInterface;
 
+use function Lazy\Http\filter_uri_host;
+use function Lazy\Http\filter_uri_port;
+use function Lazy\Http\filter_uri_path;
+use function Lazy\Http\filter_uri_query;
+use function Lazy\Http\filter_uri_scheme;
+
 class Uri implements UriInterface
 {
     /** @var array */
@@ -90,7 +96,7 @@ class Uri implements UriInterface
     public function withScheme($scheme)
     {
         $uri = clone $this;
-        $uri->components['scheme'] = $scheme;
+        $uri->components['scheme'] = filter_uri_scheme($scheme);
 
         return $uri;
     }
@@ -108,7 +114,7 @@ class Uri implements UriInterface
     public function withHost($host)
     {
         $uri = clone $this;
-        $uri->components['host'] = $host;
+        $uri->components['host'] = filter_uri_host($host);
 
         return $uri;
     }
@@ -116,7 +122,7 @@ class Uri implements UriInterface
     public function withPort($port)
     {
         $uri = clone $this;
-        $uri->components['port'] = $port;
+        $uri->components['port'] = filter_uri_port($port);
 
         return $uri;
     }
@@ -124,7 +130,7 @@ class Uri implements UriInterface
     public function withPath($path)
     {
         $uri = clone $this;
-        $uri->components['path'] = $path;
+        $uri->components['path'] = filter_uri_path($path);
 
         return $uri;
     }
@@ -132,7 +138,7 @@ class Uri implements UriInterface
     public function withQuery($query)
     {
         $uri = clone $this;
-        $uri->components['query'] = $query;
+        $uri->components['query'] = filter_uri_query($query);
 
         return $uri;
     }
