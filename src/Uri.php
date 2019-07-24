@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Lazy\Http;
 
+use InvalidArgumentException;
 use Psr\Http\Message\UriInterface;
 
 use function Lazy\Http\filter_uri_host;
@@ -32,6 +33,30 @@ class Uri implements UriInterface
 
     /** @var array */
     protected static $standartPorts = ['http' => 80, 'https' => 443];
+
+    /**
+     * Create a new URI instance.
+     *
+     * @param string $uri
+     * @throws InvalidArgumentException
+     */
+    public function __construct($uri = '')
+    {
+        $components = parse_url($uri);
+
+        if (false === $components) {
+            throw new InvalidArgumentException("Unable to parse the URI: {$uri}!");
+        }
+
+        $this->components['scheme'] = filter_uri_scheme(isset($components['scheme']) ? $components['scheme'] : '');
+        $this->components['user'] = isset($components['user']) ? $components['user'] : '';
+        $this->components['password'] = isset($components['pass']) ? $components['pass'] : null;
+        $this->components['host'] = filter_uri_host(isset($components['host']) ? $components['host'] : '');
+        $this->components['port'] = filter_uri_port(isset($components['port']) ? $components['port'] : null);
+        $this->components['path'] = filter_uri_path(isset($components['path']) ? $components['path'] : '');
+        $this->components['query'] = filter_uri_query(isset($components['query']) ? $components['query'] : '');
+        $this->components['fragment'] = isset($components['fragment']) ? $components['fragment'] : '';
+    }
 
     public function getScheme()
     {
