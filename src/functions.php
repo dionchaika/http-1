@@ -25,6 +25,36 @@ function filter_uri_scheme($scheme)
 }
 
 /**
+ * Filter a URI host component as described in the "RFC 3986".
+ *
+ * https://tools.ietf.org/html/rfc3986#section-3.2.2
+ *
+ * @param string $host
+ * @return string
+ * @throws InvalidArgumentException
+ */
+function filter_uri_host($host)
+{
+    $valid = true;
+
+    if (0 === stripos($host, '[v')) {
+        $valid = false;
+        trigger_error('Address mechanism is not supported.');
+    }
+
+    $validIpV4 = false !== filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4);
+    $validIpV6 = false !== filter_var(trim($host, '[]'), FILTER_VALIDATE_IP, FILTER_FLAG_IPV6);
+
+    $pattern = '/^(?:[A-Za-z0-9\-._~!$&\'()*+,;=]|\%[A-Fa-f0-9]{2})*$/';
+
+    if ($valid && ('' === $host || $validIpV4 || $validIpV6 || preg_match($pattern, $host))) {
+        return $host;
+    }
+
+    throw new InvalidArgumentException("URI host component is not valid: {$host}!");
+}
+
+/**
  * Filter a URI port component as described in the "RFC 3986".
  *
  * @see https://tools.ietf.org/html/rfc3986#section-3.2.3
@@ -86,4 +116,24 @@ function filter_uri_path($path, $scheme = '', $authority = '')
     }
 
     throw new InvalidArgumentException("URI path component is not valid: {$path}!");
+}
+
+/**
+ * Filter a URI query component as described in the "RFC 3986".
+ *
+ * @see https://tools.ietf.org/html/rfc3986#section-3.4
+ *
+ * @param string $query
+ * @return string
+ * @throws InvalidArgumentException
+ */
+function filter_uri_query($query)
+{
+    $pattern = '/^(?:[\/A-Za-z0-9\-._~!$&\'()*+,;=:@?]|\%[A-Fa-f0-9]{2})*$/';
+
+    if ('' === $query || preg_match($pattern, $query)) {
+        return $query;
+    }
+
+    throw new InvalidArgumentException("URI query component is not valid: {$query}!");
 }
