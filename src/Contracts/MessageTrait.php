@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Lazy\Http\Contracts;
 
 trait MessageTrait
