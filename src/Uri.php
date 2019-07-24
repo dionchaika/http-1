@@ -320,7 +320,7 @@ class Uri implements UriInterface
         if ('' !== $scheme) {
             if (! preg_match('/^[A-Za-z][A-Za-z0-9+\-.]*$/', $scheme)) {
                 throw new InvalidArgumentException(
-                    "The scheme component of the URI is not valid: {$scheme}!"
+                    "The URI scheme component is not valid: {$scheme}!"
                 );
             }
         }
@@ -342,11 +342,68 @@ class Uri implements UriInterface
         if ('' !== $userInfo) {
             if (! preg_match('/^(?:['.static::$unreserved.static::$subDelims.':]|\%[A-Fa-f0-9]{2})*$/', $userInfo)) {
                 throw new InvalidArgumentException(
-                    "The user information component of the URI is not valid: {$userInfo}!"
+                    "The URI user information component is not valid: {$userInfo}!"
                 );
             }
         }
 
         return $userInfo;
+    }
+
+    /**
+     * Filter a URI port component.
+     *
+     * @param int|null $port URI port component.
+     *
+     * @return int|null
+     *
+     * @throws InvalidArgumentException
+     */
+    protected static function filterPort($port)
+    {
+        if (null !== $port) {
+            $port = filter_var($port, FILTER_VALIDATE_INT, [
+
+                'options' => [
+
+                    'min_range' => 1,
+                    'max_range' => 65535
+
+                ],
+                'flags' => FILTER_FLAG_ALLOW_HEX | FILTER_FLAG_ALLOW_OCTAL
+
+            ]);
+
+            if (false === $port) {
+                throw new InvalidArgumentException(
+                    "The URI port component is not valid: {$port}! "
+                    ."TCP or UDP port must be in the range from 1 to 65535."
+                );
+            }
+        }
+
+        return $port;
+    }
+
+    /**
+     * Filter a URI query or fragment component.
+     *
+     * @param string $queryOrFragment URI query or fragment component.
+     *
+     * @return string
+     *
+     * @throws InvalidArgumentException
+     */
+    protected static function filterQueryOrFragment($queryOrFragment)
+    {
+        if ('' !== $queryOrFragment) {
+            if (! preg_match('/^(?:[\/'.static::$unreserved.static::$subDelims.':@?]|\%[A-Fa-f0-9]{2})*$/', $queryOrFragment)) {
+                throw new InvalidArgumentException(
+                    "The URI query or fragment component is not valid: {$queryOrFragment}!"
+                );
+            }
+        }
+
+        return $queryOrFragment;
     }
 }
