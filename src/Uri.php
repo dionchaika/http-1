@@ -18,6 +18,14 @@ use function Lazy\Http\rawurlencode_query;
 class Uri implements UriInterface
 {
     /** @var array */
+    protected static $standartPorts = [
+
+        'http' => 80,
+        'https' => 443
+
+    ];
+
+    /** @var array */
     protected $components = [
 
         'scheme' => '',
@@ -31,8 +39,17 @@ class Uri implements UriInterface
 
     ];
 
-    /** @var array */
-    protected static $standartPorts = ['http' => 80, 'https' => 443];
+    /**
+     * Is a TCP or UDP port standart for the given URI scheme component.
+     *
+     * @param int|null $port
+     * @param string $scheme
+     * @return bool
+     */
+    protected static function isStandartPort($port, $scheme)
+    {
+        return isset(static::$standartPorts[$scheme]) && $port === static::$standartPorts[$scheme];
+    }
 
     /**
      * Create a new URI instance.
@@ -219,17 +236,5 @@ class Uri implements UriInterface
         }
 
         return $uri;
-    }
-
-    /**
-     * Is a TCP or UDP port standart for the given URI scheme component.
-     *
-     * @param int|null $port
-     * @param string $scheme
-     * @return bool
-     */
-    protected static function isStandartPort($port, $scheme)
-    {
-        return isset(static::$standartPorts[$scheme]) && $port === static::$standartPorts[$scheme];
     }
 }
