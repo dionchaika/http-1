@@ -40,10 +40,12 @@ class Uri implements UriInterface
     ];
 
     /**
-     * Is a TCP or UDP port standart for the given URI scheme component.
+     * Is a TCP or UDP port standart
+     * for the given URI scheme component.
      *
      * @param int|null $port
      * @param string $scheme
+     *
      * @return bool
      */
     protected static function isStandartPort($port, $scheme)
@@ -55,6 +57,7 @@ class Uri implements UriInterface
      * Create a new URI instance.
      *
      * @param string $uri
+     *
      * @throws InvalidArgumentException
      */
     public function __construct($uri = '')
