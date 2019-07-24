@@ -22,7 +22,7 @@ class Uri implements UriInterface
 
         'scheme' => '',
         'user' => '',
-        'password' => null,
+        'pass' => null,
         'host' => '',
         'port' => null,
         'path' => '',
@@ -48,14 +48,7 @@ class Uri implements UriInterface
             throw new InvalidArgumentException("Unable to parse the URI: {$uri}!");
         }
 
-        $this->components['scheme'] = filter_uri_scheme(isset($components['scheme']) ? $components['scheme'] : '');
-        $this->components['user'] = isset($components['user']) ? $components['user'] : '';
-        $this->components['password'] = isset($components['pass']) ? $components['pass'] : null;
-        $this->components['host'] = filter_uri_host(isset($components['host']) ? $components['host'] : '');
-        $this->components['port'] = filter_uri_port(isset($components['port']) ? $components['port'] : null);
-        $this->components['path'] = filter_uri_path(isset($components['path']) ? $components['path'] : '');
-        $this->components['query'] = filter_uri_query(isset($components['query']) ? $components['query'] : '');
-        $this->components['fragment'] = isset($components['fragment']) ? $components['fragment'] : '';
+        $this->components += $components;
     }
 
     public function getScheme()
@@ -89,10 +82,10 @@ class Uri implements UriInterface
 
         if (
             '' !== $userInfo &&
-            null !== $this->components['password'] &&
-            '' !== $this->components['password']
+            null !== $this->components['pass'] &&
+            '' !== $this->components['pass']
         ) {
-            $userInfo .= ':'.$this->components['password'];
+            $userInfo .= ':'.$this->components['pass'];
         }
 
         return $userInfo;
@@ -141,7 +134,7 @@ class Uri implements UriInterface
         $uri = clone $this;
 
         $uri->components['user'] = $user;
-        $uri->components['password'] = $password;
+        $uri->components['pass'] = $password;
 
         return $uri;
     }
