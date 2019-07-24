@@ -163,6 +163,10 @@ class Uri implements UriInterface
             $uri .= '//'.$authority;
         }
 
+        if ('' !== $authority || 0 === strpos($path, '//')) {
+            $path = '/'.ltrim($path, '/');
+        }
+
         $uri .= $path;
 
         if ('' !== $query) {
