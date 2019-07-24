@@ -65,9 +65,7 @@ function filter_uri_path($path, $scheme = '', $authority = '')
         trigger_error(
             'Path of a URI with a scheme component MUST NOT start with a colon (:).'
         );
-    }
-
-    if ('' !== $authority && 0 !== strpos($path, '/')) {
+    } else if ('' !== $authority && 0 !== strpos($path, '/')) {
         $valid = false;
 
         trigger_error(
