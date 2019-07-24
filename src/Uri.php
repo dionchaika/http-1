@@ -1,4 +1,4 @@
-<?php declare(strict_types = 1);
+<?php declare(strict_types=1);
 
 namespace Lazy\Http;
 
@@ -304,5 +304,49 @@ class Uri implements UriInterface
         }
 
         return $uri;
+    }
+
+    /**
+     * Filter a URI scheme component.
+     *
+     * @param string $scheme URI scheme component.
+     *
+     * @return string
+     *
+     * @throws InvalidArgumentException
+     */
+    protected static function filterScheme($scheme)
+    {
+        if ('' !== $scheme) {
+            if (! preg_match('/^[A-Za-z][A-Za-z0-9+\-.]*$/', $scheme)) {
+                throw new InvalidArgumentException(
+                    "The scheme component of the URI is not valid: {$scheme}!"
+                );
+            }
+        }
+
+        return $scheme;
+    }
+
+    /**
+     * Filter a URI user information component.
+     *
+     * @param string $userInfo URI user information component.
+     *
+     * @return string
+     *
+     * @throws InvalidArgumentException
+     */
+    protected static function filterUserInfo($userInfo)
+    {
+        if ('' !== $userInfo) {
+            if (! preg_match('/^(?:['.static::$unreserved.static::$subDelims.':]|\%[A-Fa-f0-9]{2})*$/', $userInfo)) {
+                throw new InvalidArgumentException(
+                    "The user information component of the URI is not valid: {$userInfo}!"
+                );
+            }
+        }
+
+        return $userInfo;
     }
 }
