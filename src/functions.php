@@ -152,38 +152,6 @@ if (! function_exists('filter_uri_query')) {
     }
 }
 
-if (! function_exists('rawurlencode')) {
-    function rawurlencode($url, $component = null)
-    {
-        if (null === $component) {
-            return php_rawurlencode($url);
-        }
-
-        $patterns = [
-
-            'path' => '/(?:[^\/A-Za-z0-9\-._~!$&\'()*+,;=:@%]++|\%(?![A-Fa-f0-9]{2}))*$/',
-            'query' => '/(?:[^\/A-Za-z0-9\-._~!$&\'()*+,;=:@?%]++|\%(?![A-Fa-f0-9]{2}))*$/',
-            'fragment' => '/(?:[^\/A-Za-z0-9\-._~!$&\'()*+,;=:@?%]++|\%(?![A-Fa-f0-9]{2}))*$/'
-
-        ];
-
-        $callback = function ($matches) {
-            return php_rawurlencode($matches[0]);
-        };
-
-        switch ($component) {
-            case 'path':
-                return preg_replace_callback($patterns['path'], $callback, $url);
-            case 'query':
-                return preg_replace_callback($patterns['query'], $callback, $url);
-            case 'fragment':
-                return preg_replace_callback($patterns['fragment'], $callback, $url);
-            default:
-                return php_rawurlencode($url);
-        }
-    }
-}
-
 if (! function_exists('rawurlencode_path')) {
     /**
      * URL-encode a path component according to "RFC 3986".
