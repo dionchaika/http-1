@@ -14,6 +14,6 @@ function filter_uri_scheme($scheme)
     }
 
     throw new InvalidArgumentException(
-        "URI scheme component is not valid: {$scheme}!"
+        "URI scheme component is not valid: {$scheme}! The rule is: \"/^[a-z][a-z0-9+\-.]*$/i\""
     );
 }
