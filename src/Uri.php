@@ -107,7 +107,7 @@ class Uri implements UriInterface
     {
         $standart = static::isStandartPort(
             $this->components['port'],
-            $this->components['scheme']
+            $this->getScheme()
         );
 
         return $standart ? null : $this->components['port'];
@@ -165,7 +165,10 @@ class Uri implements UriInterface
     public function withPath($path)
     {
         $uri = clone $this;
-        $uri->components['path'] = filter_uri_path($path);
+
+        $uri->components['path'] = filter_uri_path(
+            $path, $this->getScheme(), $this->getUserInfo()
+        );
 
         return $uri;
     }
