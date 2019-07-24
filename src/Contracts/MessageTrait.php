@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Lazy\Http\Contracts;
 
+use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;
 
 trait MessageTrait
@@ -22,6 +23,46 @@ trait MessageTrait
 
     /** @var string */
     protected $protocolVersion = '1.1';
+
+    /**
+     * Filter an HTTP header name according to "RFC 7230".
+     *
+     * @see https://tools.ietf.org/html/rfc7230#section-3.2
+     *
+     * @param string $name
+     * @return string
+     * @throws InvalidArgumentException
+     */
+    protected static function filterHeaderName($name)
+    {
+        if (preg_match(static::$token, $name)) {
+            return $name;
+        }
+
+        throw new InvalidArgumentException("HTTP header name is not valid: {$name}!");
+    }
+
+    /**
+     * Filter an HTTP header value according to "RFC 7230".
+     *
+     * @see https://tools.ietf.org/html/rfc7230#section-3.2
+     *
+     * @param string|string[] $value
+     * @return string[]
+     * @throws InvalidArgumentException
+     */
+    protected static function filterHeaderValue($value)
+    {
+        $values = (array) $value;
+
+        foreach ($values as $value) {
+            if (! preg_match(static::$header, $value)) {
+                throw new InvalidArgumentException("HTTP header value is not valid: {$value}!");
+            }
+        }
+
+        return $values;
+    }
 
     public function getProtocolVersion()
     {
@@ -66,26 +107,51 @@ trait MessageTrait
 
     public function withHeader($name, $value)
     {
-        
+        $name = static::filterHeaderName($name);
+        $values = static::filterHeaderValue($value);
+
+        $message = clone $this;
+        $message->headers[strtolower($name)] = compact('name', 'values');
+
+        return $message;
     }
 
     public function withAddedHeader($name, $value)
     {
-        
+        $name = static::filterHeaderName($name);
+        $values = static::filterHeaderValue($value);
+
+        $normalizedName = strtolower($name);
+
+        $message = clone $this;
+
+        if (isset($message->headers[$normalizedName])) {
+            $message->headers[$normalizedName]['values'] += $values;
+        } else {
+            $message->headers[$normalizedName] = compact('name', 'values');
+        }
+
+        return $message;
     }
 
     public function withoutHeader($name)
     {
-        
+        $message = clone $this;
+        unset($message->headers[strtolower($name)]);
+
+        return $message;
     }
 
     public function getBody()
     {
-        
+        return $this->body;
     }
 
     public function withBody(StreamInterface $body)
     {
-        
+        $message = clone $this;
+        $message->body = $body;
+
+        return $message;
     }
 }
