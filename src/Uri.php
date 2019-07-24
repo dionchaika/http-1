@@ -116,8 +116,7 @@ class Uri implements UriInterface
     public function getPort()
     {
         $standart = static::isStandartPort(
-            $this->components['port'],
-            $this->getScheme()
+            $this->components['port'], $this->getScheme()
         );
 
         return $standart ? null : $this->components['port'];
