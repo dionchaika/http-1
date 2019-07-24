@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Lazy\Http;
 
-use InvalidArgumentException;
 use Psr\Http\Message\UriInterface;
 
 class Uri implements UriInterface
