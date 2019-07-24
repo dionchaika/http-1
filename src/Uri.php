@@ -207,8 +207,12 @@ class Uri implements UriInterface
             $uri .= '//'.$authority;
         }
 
-        if ('' !== $authority || 0 === strpos($path, '//')) {
-            $path = '/'.ltrim($path, '/');
+        if (0 !== strpos($path, '/') && '' !== $authority) {
+            $path = '/'.$path;
+        }
+
+        if (0 === strpos($path, '//') && '' === $authority) {
+            $path = '/'.ltrim($path);
         }
 
         $uri .= $path;
