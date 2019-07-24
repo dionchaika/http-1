@@ -245,6 +245,30 @@ class Uri implements UriInterface
     }
 
     /**
+     * Encode a URI path component.
+     *
+     * @param string $path URI path component.
+     *
+     * @return string
+     */
+    protected static function encodePath($path)
+    {
+
+    }
+
+    /**
+     * Encode a URI query or fragment component.
+     *
+     * @param string $queryOrFragment URI query or fragment component.
+     *
+     * @return string
+     */
+    protected static function encodeQueryOrFragment($queryOrFragment)
+    {
+
+    }
+
+    /**
      * Compose the URI user
      * information component into a single string.
      *
@@ -351,6 +375,20 @@ class Uri implements UriInterface
     }
 
     /**
+     * Filter a URI host component.
+     *
+     * @param string $host URI host component.
+     *
+     * @return string
+     *
+     * @throws InvalidArgumentException
+     */
+    protected static function filterHost($host)
+    {
+
+    }
+
+    /**
      * Filter a URI port component.
      *
      * @param int|null $port URI port component.
@@ -383,6 +421,21 @@ class Uri implements UriInterface
         }
 
         return $port;
+    }
+
+    /**
+     * Filter a URI path component.
+     *
+     * @param string $path URI path component.
+     * @param UriInterface $uri Current URI instance.
+     *
+     * @return string
+     *
+     * @throws InvalidArgumentException
+     */
+    protected static function filterPath($path, UriInterface $uri)
+    {
+
     }
 
     /**
