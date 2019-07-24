@@ -25,13 +25,6 @@ class Uri implements UriInterface
     ];
 
     /**
-     * The "file" URI scheme component value.
-     *
-     * @var string
-     */
-    protected static $fileScheme = 'file';
-
-    /**
      * The "RFC 3986" sub-delimiters.
      *
      * @var string
@@ -253,7 +246,13 @@ class Uri implements UriInterface
      */
     protected static function encodePath($path)
     {
-
+        return preg_replace_callback(
+            '/(?:[^\/'.static::$unreserved.static::$subDelims.':@%]++|\%(?![A-Fa-f0-9]{2}))/',
+            function ($matches) {
+                return rawurlencode($matches[0]);
+            },
+            $path
+        );
     }
 
     /**
@@ -265,7 +264,13 @@ class Uri implements UriInterface
      */
     protected static function encodeQueryOrFragment($queryOrFragment)
     {
-
+        return preg_replace_callback(
+            '/(?:[^\/'.static::$unreserved.static::$subDelims.':@?%]++|\%(?![A-Fa-f0-9]{2}))/',
+            function ($matches) {
+                return rawurlencode($matches[0]);
+            },
+            $queryOrFragment
+        );
     }
 
     /**
@@ -309,8 +314,6 @@ class Uri implements UriInterface
 
         if ('' !== $authority) {
             $uri .= '//'.$authority;
-        } else if ($scheme === static::$fileScheme) {
-            $uri .= '//';
         }
 
         if ('' !== $authority || 0 === strpos($path, '//')) {
