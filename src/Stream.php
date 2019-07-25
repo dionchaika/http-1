@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Lazy\Http;
 
+use Throwable;
 use RuntimeException;
 use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;
@@ -11,10 +12,10 @@ use Psr\Http\Message\StreamInterface;
 class Stream implements StreamInterface
 {
     /** @var string */
-    protected static $readableModes = '/r\+?|w\+|a\+|x\+|c\+/';
+    protected static $writableModes = '/r\+|w\+?|a\+?|x\+?|c\+?/';
 
     /** @var string */
-    protected static $writableModes = '/r\+|w\+?|a\+?|x\+?|c\+?/';
+    protected static $readableModes = '/r\+?|w\+|a\+|x\+|c\+/';
 
     /** @var resource */
     protected $stream;
@@ -23,10 +24,10 @@ class Stream implements StreamInterface
     protected $seekable = false;
 
     /** @var bool */
-    protected $readable = false;
+    protected $writable = false;
 
     /** @var bool */
-    protected $writable = false;
+    protected $readable = false;
 
     /**
      * Creates a new stream instance.
@@ -43,6 +44,171 @@ class Stream implements StreamInterface
         }
 
         $this->stream = $stream;
+
+        $this->seekable = $this->getMetadata('seekable');
+
+        $mode = $this->getMetadata('mode');
+
+        $this->writable = preg_match(static::$writableModes, $mode);
+        $this->readable = preg_match(static::$readableModes, $mode);
+    }
+
+    public function __toString()
+    {
+        try {
+            if ($this->isSeekable()) {
+                $this->rewind();
+            }
+
+            return $this->getContents();
+        } catch (Throwable $e) {
+            trigger_error($e->getMessage(), E_USER_ERROR);
+            return '';
+        }
+    }
+
+    public function close()
+    {
+        if (null !== $this->stream && fclose($this->stream)) {
+            $this->detach();
+        }
+    }
+
+    public function detach()
+    {
+        $stream = $this->stream;
+
+        if (null !== $stream) {
+            $this->stream = null;
+            $this->seekable = $this->readable = $this->writable = false;
+        }
+
+        return $stream;
+    }
+
+    public function getSize()
+    {
+        if (null === $this->stream) {
+            return null;
+        }
+
+        $stat = fstat($this->stream);
+
+        return (false === $stat) ? null : $stat['size'];
+    }
+
+    public function tell()
+    {
+        if (null === $this->stream) {
+            throw new RuntimeException('Stream is detached!');
+        }
+
+        $position = ftell($this->stream);
+
+        if (false === $position) {
+            throw new RuntimeException(
+                'Unable to tell the current position of the stream read/write pointer!'
+            );
+        }
+
+        return $position;
+    }
+
+    public function eof()
+    {
+        return null === $this->stream || feof($this->stream);
+    }
+
+    public function isSeekable()
+    {
+        return $this->seekable;
+    }
+
+    public function seek($offset, $whence = SEEK_SET)
+    {
+        if (null === $this->stream) {
+            throw new RuntimeException('Stream is detached!');
+        }
+
+        if (! $this->isSeekable()) {
+            throw new RuntimeException('Stream is not seekable!');
+        }
+
+        if (-1 === fseek($this->stream, $offset, $whence)) {
+            throw new RuntimeException('Unable to seek to a position in the stream!');
+        }
+    }
+
+    public function rewind()
+    {
+        $this->seek(0);
+    }
+
+    public function isWritable()
+    {
+        return $this->writable;
+    }
+
+    public function write($string)
+    {
+        if (null === $this->stream) {
+            throw new RuntimeException('Stream is detached!');
+        }
+
+        if (! $this->isWritable()) {
+            throw new RuntimeException('Stream is not writable!');
+        }
+
+        $bytes = fwrite($this->stream, $string);
+
+        if (false === $bytes) {
+            throw new RuntimeException('Unable to write data to the stream!');
+        }
+
+        return $bytes;
+    }
+
+    public function isReadable()
+    {
+        return $this->readable;
+    }
+
+    public function read($length)
+    {
+        if (null === $this->stream) {
+            throw new RuntimeException('Stream is detached!');
+        }
+
+        if (! $this->isReadable()) {
+            throw new RuntimeException('Stream is not readable!');
+        }
+
+        $data = fread($this->stream, $length);
+
+        if (false === $data) {
+            throw new RuntimeException('Unable to read data from the stream!');
+        }
+
+        return $data;
+    }
+
+    public function getContents()
+    {
+        if (null === $this->stream) {
+            throw new RuntimeException('Stream is detached!');
+        }
+
+        if (! $this->isReadable()) {
+            throw new RuntimeException('Stream is not readable!');
+        }
+
+        $contents = stream_get_contents($this->stream);
+
+        if (false === $contents) {
+            throw new RuntimeException('Unable to get the contents of the stream!');
+        }
+
+        return $contents;
     }
 
     public function getMetadata($key = null)
