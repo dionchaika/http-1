@@ -12,10 +12,10 @@ use Psr\Http\Message\StreamInterface;
 class Stream implements StreamInterface
 {
     /** @var string */
-    protected static $writableModes = '/r\+|w\+?|a\+?|x\+?|c\+?/';
+    protected static $readableModes = '/^(?:r\+?|w\+|a\+|x\+|c\+)[tb]*$/';
 
     /** @var string */
-    protected static $readableModes = '/r\+?|w\+|a\+|x\+|c\+/';
+    protected static $writableModes = '/^(?:r\+|w\+?|a\+?|x\+?|c\+?)[tb]*$/';
 
     /** @var resource */
     protected $stream;
