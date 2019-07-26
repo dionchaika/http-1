@@ -42,12 +42,26 @@ class Uri implements UriInterface
      *
      * @return bool
      */
-    public static function isEqual(UriInterface $first, UriInterface $second, $performNormalization = true)
-    {
+    public static function isEqual(
+        UriInterface $first,
+        UriInterface $second,
+        $performNormalization = true
+    ) {
         if (! $performNormalization) {
             return (string) $first === (string) $second;
         }
 
         return (string) static::normalize($first) === (string) static::normalize($second);
+    }
+
+    /**
+     * Normalize a URI according to "RFC 3986".
+     *
+     * @param UriInterface $uri
+     * @return UriInterface
+     */
+    public static function normalize(UriInterface $uri)
+    {
+        
     }
 }
