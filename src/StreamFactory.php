@@ -16,11 +16,12 @@ final class StreamFactory implements StreamFactoryInterface
 
     public function createStream(string $content = ''): StreamInterface
     {
-        $stream = fopen('php://temp', 'r+');
+        $stream = new Stream(fopen('php://temp', 'r+'));
 
-        fwrite($stream, $content);
+        $stream->write($content);
+        $stream->rewind();
 
-        return new Stream($stream);
+        return $stream;
     }
 
     public function createStreamFromFile(string $filename, string $mode = 'r'): StreamInterface
