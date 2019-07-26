@@ -58,7 +58,8 @@ class Request extends Message implements RequestInterface
     }
 
     /**
-     * Get the HTTP "Host" header value from the given URI.
+     * Get the HTTP "Host"
+     * header value from the given URI.
      *
      * @param UriInterface $uri
      * @return string
