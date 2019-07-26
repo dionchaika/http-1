@@ -57,4 +57,44 @@ abstract class Message implements MessageInterface
 
         return $values;
     }
+
+    public function getProtocolVersion()
+    {
+        return $this->protocolVersion;
+    }
+
+    public function withProtocolVersion($version)
+    {
+        $message = clone $this;
+        $message->protocolVersion = $version;
+
+        return $message;
+    }
+
+    public function getHeaders()
+    {
+        $headers = [];
+
+        foreach ($this->headers as $header) {
+            $headers[$header['name']] = $header['values'];
+        }
+
+        return $headers;
+    }
+
+    public function hasHeader($name)
+    {
+        return isset($this->headers[strtolower($name)]);
+    }
+
+    public function getHeader($name)
+    {
+        $name = strtolower($name);
+        return isset($this->headers[$name]) ? $this->headers[$name]['values'] : [];
+    }
+
+    public function getHeaderLine($name)
+    {
+        return implode(', ', $this->getHeader($name));
+    }
 }
