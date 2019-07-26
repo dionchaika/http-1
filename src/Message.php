@@ -13,12 +13,6 @@ abstract class Message implements MessageInterface
     const TOKEN = '/^[!#$%&\'*+\-.^_`|~0-9A-Za-z]+$/';
     const FIELD_VALUE = '/^[ \t]*(?:(?:[\x21-\x7e\x80-\xff](?:[ \t]+[\x21-\x7e\x80-\xff])?)|\r\n[ \t]+)*[ \t]*$/';
 
-    const HTTP_CONTENT_ENCODING = 'Content-Encoding';
-    const HTTP_CONTENT_LANGUAGE = 'Content-Language';
-    const HTTP_CONTENT_LOCATION = 'Content-Location';
-    const HTTP_CONTENT_TYPE = 'Content-Type';
-    const HTTP_MIME_VERSION = 'MIME-Version';
-
     /** @var StreamInterface */
     protected $body;
 
