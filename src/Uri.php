@@ -139,9 +139,11 @@ class Uri implements UriInterface
             $path = '/'.$path;
         }
 
-        if ('' !== $path && '/' === $path && isset($path[1]) && '/' === $path[1] && '' === $authority) {
+        if ('' !== $path && '/' === $path[0] && isset($path[1]) && '/' === $path[1] && '' === $authority) {
             $path = '/'.ltrim($path, '/');
         }
+
+        return $path;
     }
 
     /**
