@@ -23,7 +23,7 @@ abstract class Message implements MessageInterface
     protected $protocolVersion = '1.1';
 
     /**
-     * Filter HTTP header name.
+     * Filter an HTTP header name.
      *
      * @param string $name
      * @return string
@@ -39,7 +39,7 @@ abstract class Message implements MessageInterface
     }
 
     /**
-     * Filter HTTP header value(s).
+     * Filter an HTTP header value.
      *
      * @param string|string[] $value
      * @return string[]
