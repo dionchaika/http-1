@@ -9,6 +9,9 @@ use Psr\Http\Message\UriInterface;
 
 class Uri implements UriInterface
 {
+    const SUB_DELIMS = '!$&\'()*+,;=';
+    const UNRESERVED = 'A-Za-z0-9\-._~';
+
     /** @var string */
     protected $scheme = '';
 
@@ -34,7 +37,7 @@ class Uri implements UriInterface
     protected $fragment = '';
 
     /**
-     * Compare two URI.
+     * Compare two URIs.
      *
      * @param UriInterface $first
      * @param UriInterface $second
@@ -57,11 +60,15 @@ class Uri implements UriInterface
     /**
      * Normalize a URI according to "RFC 3986".
      *
+     * @see https://tools.ietf.org/html/rfc3986#section-6
+     *
      * @param UriInterface $uri
      * @return UriInterface
      */
-    public static function normalize(UriInterface $uri)
+    public static function normalize(UriInterface $uri): UriInterface
     {
-        
+        //
+
+        return $uri;
     }
 }
