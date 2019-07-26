@@ -13,8 +13,11 @@ abstract class Message implements MessageInterface
     const TOKEN = '/^[!#$%&\'*+\-.^_`|~0-9A-Za-z]+$/';
     const FIELD_VALUE = '/^[ \t]*(?:(?:[\x21-\x7e\x80-\xff](?:[ \t]+[\x21-\x7e\x80-\xff])?)|\r\n[ \t]+)*[ \t]*$/';
 
-    const PROTOCOL_1_0 = '1.0';
-    const PROTOCOL_1_1 = '1.1';
+    const HTTP_CONTENT_ENCODING = 'Content-Encoding';
+    const HTTP_CONTENT_LANGUAGE = 'Content-Language';
+    const HTTP_CONTENT_LOCATION = 'Content-Location';
+    const HTTP_CONTENT_TYPE = 'Content-Type';
+    const HTTP_MIME_VERSION = 'MIME-Version';
 
     /** @var StreamInterface */
     protected $body;
@@ -26,7 +29,7 @@ abstract class Message implements MessageInterface
     protected $protocolVersion = '1.1';
 
     /**
-     * Filter an HTTP header name.
+     * Filter HTTP header name.
      *
      * @param string $name
      * @return string
@@ -42,7 +45,7 @@ abstract class Message implements MessageInterface
     }
 
     /**
-     * Filter an HTTP header value(s).
+     * Filter HTTP header value(s).
      *
      * @param string|string[] $value
      * @return string[]
@@ -140,11 +143,6 @@ abstract class Message implements MessageInterface
 
     public function getBody()
     {
-        if (null === $this->body) {
-            $factory = new StreamFactory();
-            $this->body = $factory->createStream();
-        }
-
         return $this->body;
     }
 
