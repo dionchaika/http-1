@@ -10,7 +10,16 @@ use Psr\Http\Message\RequestInterface;
 
 class Request extends Message implements RequestInterface
 {
-    const HOST_HEADER = 'Host';
+    const HOST = 'Host';
+
+    const METHOD_GET = 'GET';
+    const METHOD_PUT = 'PUT';
+    const METHOD_HEAD = 'HEAD';
+    const METHOD_POST = 'POST';
+    const METHOD_TRACE = 'TRACE';
+    const METHOD_DELETE = 'DELETE';
+    const METHOD_CONNECT = 'CONNECT';
+    const METHOD_OPTIONS = 'OPTIONS';
 
     /** @var array */
     protected static $standartMethods = [
@@ -85,7 +94,7 @@ class Request extends Message implements RequestInterface
         }
 
         $this->uri = $uri;
-        $this->setHost($uri);
+        $this->setHost(static::getHost($uri));
     }
 
     public function getRequestTarget()
@@ -137,29 +146,51 @@ class Request extends Message implements RequestInterface
         $request = clone $this;
         $request->uri = $uri;
 
-        if (! $preserveHost || '' === $this->getHeaderLine(self::HOST_HEADER)) {
-            $request->setHost($uri);
+        if (! $preserveHost || '' === $this->getHeaderLine(self::HOST)) {
+            $request->setHost(static::getHost($uri));
         }
 
         return $request;
     }
 
+    public function withHeader($name, $value)
+    {
+        if (0 === strcasecmp($name, self::HOST)) {
+            $request = clone $this;
+            $request->setHost($value);
+
+            return $request;
+        }
+
+        return parent::withHeader($name, $value);
+    }
+
+    public function withAddedHeader($name, $value)
+    {
+        if (0 === strcasecmp($name, self::HOST)) {
+            $request = clone $this;
+            $request->setHost($value);
+
+            return $request;
+        }
+
+        return parent::withAddedHeader($name, $value);
+    }
+
     /**
-     * Set the "Host" header from the given URI.
+     * Set the "Host" header to the request.
      *
-     * @param UriInterface $uri
+     * @param string $host
      * @return void
      */
-    protected function setHost(UriInterface $uri)
+    protected function setHost($host)
     {
-        $host = static::getHost($uri);
-
         if ('' !== $host) {
             $this->headers = [
 
                 'host' => [
 
-                    'name' => self::HOST_HEADER,
+                    'name' => self::HOST,
                     'values' => static::filterHeaderValue($host)
 
                 ]

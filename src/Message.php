@@ -13,6 +13,9 @@ abstract class Message implements MessageInterface
     const TOKEN = '/^[!#$%&\'*+\-.^_`|~0-9A-Za-z]+$/';
     const FIELD_VALUE = '/^[ \t]*(?:(?:[\x21-\x7e\x80-\xff](?:[ \t]+[\x21-\x7e\x80-\xff])?)|\r\n[ \t]+)*[ \t]*$/';
 
+    const PROTOCOL_1_0 = '1.0';
+    const PROTOCOL_1_1 = '1.1';
+
     /** @var StreamInterface */
     protected $body;
 
