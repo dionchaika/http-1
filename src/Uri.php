@@ -68,8 +68,16 @@ class Uri implements UriInterface
      */
     public static function normalize(UriInterface $uri): UriInterface
     {
-        //
+        if ('' !== $uri->getScheme() && '' === $uri->getPath()) {
+            $uri = $uri->withPath('/');
+        }
 
-        return $uri;
+        $uri = new static(preg_replace_callback('/(?:\%[A-Fa-f0-9]{2})++/', function ($matches) {
+            return strtoupper($matches[0]);
+        }, (string) $uri));
+
+        return new static(preg_replace_callback('/\%(?:2D|2E|5F|7E|3[0-9]|[46][1-9A-F]|[57][0-9A])/', function ($matches) {
+            return rawurldecode($matches[0]);
+        }, (string) $uri));
     }
 }
