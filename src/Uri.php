@@ -72,7 +72,7 @@ class Uri implements UriInterface
      */
     protected static function percentEncodePath($path)
     {
-        $pattern = '/(?:[\/'.self::UNRESERVED.self::SUB_DELIMS.':@%]++|\%(?![A-Za-z0-9]{2}))/';
+        $pattern = '/(?:[^\/'.self::UNRESERVED.self::SUB_DELIMS.':@%]++|\%(?![A-Za-z0-9]{2}))/';
 
         return preg_replace_callback(
             $pattern,
@@ -96,7 +96,7 @@ class Uri implements UriInterface
      */
     protected static function percentEncodeQueryOrFragment($queryOrFragment)
     {
-        $pattern = '/(?:[\/'.self::UNRESERVED.self::SUB_DELIMS.':@?%]++|\%(?![A-Za-z0-9]{2}))/';
+        $pattern = '/(?:[^\/'.self::UNRESERVED.self::SUB_DELIMS.':@?%]++|\%(?![A-Za-z0-9]{2}))/';
 
         return preg_replace_callback(
             $pattern,
