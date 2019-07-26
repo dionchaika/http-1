@@ -21,4 +21,40 @@ abstract class Message implements MessageInterface
 
     /** @var string */
     protected $protocolVersion = '1.1';
+
+    /**
+     * Filter an HTTP header name.
+     *
+     * @param string $name
+     * @return string
+     * @throws InvalidArgumentException
+     */
+    protected static function filterHeaderName($name)
+    {
+        if (preg_match(self::TOKEN, $name)) {
+            return $name;
+        }
+
+        throw new InvalidArgumentException("Invalid header name: {$name}!");
+    }
+
+    /**
+     * Filter an HTTP header value(s).
+     *
+     * @param string|string[] $value
+     * @return string[]
+     * @throws InvalidArgumentException
+     */
+    protected static function filterHeaderValue($value)
+    {
+        $values = (array) $value;
+
+        foreach ($values as $value) {
+            if (! preg_match(self::FIELD_VALUE, $value)) {
+                throw new InvalidArgumentException("Invalid header value: {$value}!");
+            }
+        }
+
+        return $values;
+    }
 }
