@@ -63,6 +63,20 @@ class Response extends Message implements ResponseInterface
     protected $reasonPhrase;
 
     /**
+     * Get the standart reason
+     * phrase for the given HTTP status code.
+     *
+     * @param int $code
+     * @return string
+     */
+    protected static function getStandartReasonPhrase($code)
+    {
+        return
+            isset(static::$standartReasonPhrases[$code])
+            ? static::$standartReasonPhrases[$code] : '';
+    }
+
+    /**
      * Filter an HTTP status code.
      *
      * @param int $code
@@ -71,25 +85,11 @@ class Response extends Message implements ResponseInterface
      */
     protected static function filterStatusCode($code)
     {
-        if (99 < $code && 600 > $code && 306 !== $code) {
+        if (100 <= $code && 599 >= $code && 306 !== $code) {
             return $code;
         }
 
         throw new InvalidArgumentException("Invalid HTTP status code: {$code}!");
-    }
-
-    /**
-     * Get the standart reason phrase
-     * gor the given HTTP status code.
-     *
-     * @param int $statusCode
-     * @return string
-     */
-    protected static function getStandartReasonPhrase($statusCode)
-    {
-        return
-            isset(static::$standartReasonPhrases[$statusCode])
-            ? static::$standartReasonPhrases[$statusCode] : '';
     }
 
     /**
@@ -103,11 +103,6 @@ class Response extends Message implements ResponseInterface
     public function __construct($code = 200, $reasonPhrase = '')
     {
         $this->statusCode = static::filterStatusCode($code);
-
-        if ('' !== $reasonPhrase) {
-            $reasonPhrase = static::getStandartReasonPhrase($code);
-        }
-
         $this->reasonPhrase = $reasonPhrase;
     }
 
@@ -121,11 +116,6 @@ class Response extends Message implements ResponseInterface
         $response = clone $this;
 
         $response->statusCode = static::filterStatusCode($code);
-
-        if ('' !== $reasonPhrase) {
-            $reasonPhrase = static::getStandartReasonPhrase($code);
-        }
-        
         $response->reasonPhrase = $reasonPhrase;
 
         return $response;
@@ -133,6 +123,10 @@ class Response extends Message implements ResponseInterface
 
     public function getReasonPhrase()
     {
-        return $this->reasonPhrase;
+        if ('' === $this->reasonPhrase) {
+            return $this->reasonPhrase;
+        }
+
+        return static::getStandartReasonPhrase($this->getStatusCode());
     }
 }
