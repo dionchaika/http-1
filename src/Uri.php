@@ -72,6 +72,11 @@ class Uri implements UriInterface
             $uri = $uri->withPath('/');
         }
 
+        $queryParams = explode('&', $uri->getQuery());
+
+        sort($queryParams);
+        $uri = $uri->withQuery(implode('&', $queryParams));
+
         $uri = new static(preg_replace_callback('/(?:\%[A-Fa-f0-9]{2})++/', function ($matches) {
             return strtoupper($matches[0]);
         }, (string) $uri));
