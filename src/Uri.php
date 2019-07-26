@@ -32,4 +32,22 @@ class Uri implements UriInterface
 
     /** @var string */
     protected $fragment = '';
+
+    /**
+     * Compare two URI.
+     *
+     * @param UriInterface $first
+     * @param UriInterface $second
+     * @param bool $performNormalization
+     *
+     * @return bool
+     */
+    public static function isEqual(UriInterface $first, UriInterface $second, $performNormalization = true)
+    {
+        if (! $performNormalization) {
+            return (string) $first === (string) $second;
+        }
+
+        return (string) static::normalize($first) === (string) static::normalize($second);
+    }
 }
