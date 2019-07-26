@@ -11,12 +11,11 @@ use Psr\Http\Message\StreamFactoryInterface;
 
 final class StreamFactory implements StreamFactoryInterface
 {
-    /** @var string */
-    protected static $modes = '/^(?:r\+?|w\+?|a\+?|x\+?|c\+?|e)[tb]*$/';
-
     public function createStream(string $content = ''): StreamInterface
     {
-        $stream = new Stream(fopen('php://temp', 'r+'));
+        $stream = new Stream(
+            fopen('php://temp', 'r+')
+        );
 
         $stream->write($content);
         $stream->rewind();
@@ -26,7 +25,7 @@ final class StreamFactory implements StreamFactoryInterface
 
     public function createStreamFromFile(string $filename, string $mode = 'r'): StreamInterface
     {
-        if (! preg_match(static::$modes, $mode)) {
+        if (! preg_match(Stream::MODES, $mode)) {
             throw new InvalidArgumentException("Invalid stream mode: {$mode}!");
         }
 

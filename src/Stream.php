@@ -11,11 +11,9 @@ use Psr\Http\Message\StreamInterface;
 
 class Stream implements StreamInterface
 {
-    /** @var string */
-    protected static $readableModes = '/^(?:r\+?|w\+|a\+|x\+|c\+)[tb]*$/';
-
-    /** @var string */
-    protected static $writableModes = '/^(?:r\+|w\+?|a\+?|x\+?|c\+?)[tb]*$/';
+    const MODES = '/^(?:r\+?|w\+?|a\+?|x\+?|c\+?|e)[tb]*$/';
+    const READABLE_MODES = '/^(?:r\+?|w\+|a\+|x\+|c\+)[tb]*$/';
+    const WRITABLE_MODES = '/^(?:r\+|w\+?|a\+?|x\+?|c\+?)[tb]*$/';
 
     /** @var resource */
     protected $stream;
@@ -49,8 +47,8 @@ class Stream implements StreamInterface
 
         $mode = $this->getMetadata('mode');
 
-        $this->writable = preg_match(static::$writableModes, $mode);
-        $this->readable = preg_match(static::$readableModes, $mode);
+        $this->writable = preg_match(self::WRITABLE_MODES, $mode);
+        $this->readable = preg_match(self::READABLE_MODES, $mode);
     }
 
     public function __toString()
