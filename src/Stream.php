@@ -28,7 +28,7 @@ class Stream implements StreamInterface
     protected $readable = false;
 
     /**
-     * Creates a new stream instance.
+     * Initializes a new stream instance.
      *
      * @param resource $stream
      * @throws InvalidArgumentException
