@@ -35,7 +35,7 @@ abstract class Message implements MessageInterface
             return $name;
         }
 
-        throw new InvalidArgumentException("Invalid header name: {$name}!");
+        throw new InvalidArgumentException("Invalid HTTP header name: {$name}!");
     }
 
     /**
@@ -51,7 +51,7 @@ abstract class Message implements MessageInterface
 
         foreach ($values as $value) {
             if (! preg_match(self::FIELD_VALUE, $value)) {
-                throw new InvalidArgumentException("Invalid header value: {$value}!");
+                throw new InvalidArgumentException("Invalid HTTP header value: {$value}!");
             }
         }
 
