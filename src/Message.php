@@ -97,4 +97,56 @@ abstract class Message implements MessageInterface
     {
         return implode(', ', $this->getHeader($name));
     }
+
+    public function withHeader($name, $value)
+    {
+        $name = static::filterHeaderName($name);
+        $values = static::filterHeaderValue($value);
+
+        $message = clone $this;
+        $message->headers[strtolower($name)] = compact('name', 'values');
+
+        return $message;
+    }
+
+    public function withAddedHeader($name, $value)
+    {
+        $name = static::filterHeaderName($name);
+        $values = static::filterHeaderValue($value);
+
+        $normalizedName = strtolower($name);
+
+        $message = clone $this;
+
+        if (isset($message->headers[$normalizedName])) {
+            $message->headers[$normalizedName]['values'] += $values;
+        } else {
+            $message->headers[$normalizedName] = compact('name', 'values');
+        }
+
+        return $message;
+    }
+
+    public function withoutHeader($name)
+    {
+        $message = clone $this;
+        unset($message->headers[strtolower($name)]);
+
+        return $message;
+    }
+
+    public function getBody()
+    {
+        if (null === $this->body) {
+            $this->body = (new StreamFactory())
+                ->createStream();
+        }
+
+        return $this->body;
+    }
+
+    public function withBody(StreamInterface $body)
+    {
+        $this->body = $body;
+    }
 }
