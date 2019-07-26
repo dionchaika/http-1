@@ -50,11 +50,12 @@ class Uri implements UriInterface
         UriInterface $second,
         $performNormalization = true
     ) {
-        if (! $performNormalization) {
-            return (string) $first === (string) $second;
+        if ($performNormalization) {
+            $first = static::normalize($first);
+            $second = static::normalize($second);
         }
 
-        return (string) static::normalize($first) === (string) static::normalize($second);
+        return (string) $first === (string) $second;
     }
 
     /**
