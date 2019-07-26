@@ -144,6 +144,53 @@ class Uri implements UriInterface
         }
     }
 
+    /**
+     * Initializes a new URI instance.
+     *
+     * @param string $uri
+     * @throws InvalidArgumentException
+     */
+    public function __construct($uri = '')
+    {
+        $components = parse_url($uri);
+
+        if (false === $components) {
+            throw new InvalidArgumentException("Unable to parse the URI: {$uri}!");
+        }
+
+        if (isset($components['scheme'])) {
+            $this->scheme = $components['scheme'];
+        }
+
+        if (isset($components['user'])) {
+            $this->user = $components['user'];
+        }
+
+        if (isset($components['pass'])) {
+            $this->password = $components['pass'];
+        }
+
+        if (isset($components['host'])) {
+            $this->host = $components['host'];
+        }
+
+        if (isset($components['port'])) {
+            $this->port = static::filterPort($components['port']);
+        }
+
+        if (isset($components['path'])) {
+            $this->path = $components['path'];
+        }
+
+        if (isset($components['query'])) {
+            $this->query = $components['query'];
+        }
+
+        if (isset($components['fragment'])) {
+            $this->fragment = $components['fragment'];
+        }
+    }
+
     public function getScheme()
     {
         return strtolower($this->scheme);
