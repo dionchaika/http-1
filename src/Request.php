@@ -21,6 +21,28 @@ class Request extends Message implements RequestInterface
     const METHOD_CONNECT = 'CONNECT';
     const METHOD_OPTIONS = 'OPTIONS';
 
+    const HTTP_ACCEPT = 'Accept';
+    const HTTP_ACCEPT_CHARSET = 'Accept-Charset';
+    const HTTP_ACCEPT_ENCODING = 'Accept-Encoding';
+    const HTTP_ACCEPT_LANGUAGE = 'Accept-Language';
+    const HTTP_AUTHORIZATION = 'Authorization';
+    const HTTP_CACHE_CONTROL = 'Cache-Control';
+    const HTTP_EXPECT = 'Expect';
+    const HTTP_FROM = 'From';
+    const HTTP_HOST = 'Host';
+    const HTTP_IF_MATCH = 'If-Match';
+    const HTTP_IF_MODIFIED_SINCE = 'If-Modified-Since';
+    const HTTP_IF_NONE_MATCH = 'If-None-Match';
+    const HTTP_IF_RANGE = 'If-Range';
+    const HTTP_IF_UNMODIFIED_SINCE = 'If-Unmodified-Since';
+    const HTTP_MAX_FORWARDS = 'Max-Forwards';
+    const HTTP_PRAGMA = 'Pragma';
+    const HTTP_PROXY_AUTHORIZATION = 'Proxy-Authorization';
+    const HTTP_RANGE = 'Range';
+    const HTTP_REFERER = 'Referer';
+    const HTTP_TE = 'TE';
+    const HTTP_USER_AGENT = 'User-Agent';
+
     /** @var array */
     protected static $standartMethods = [
 
