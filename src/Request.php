@@ -89,15 +89,14 @@ class Request extends Message implements RequestInterface
      */
     public function __construct($method, $uri)
     {
-        $this->method = static::filterMethod($method);
-
         if (is_string($uri)) {
             $uri = new Uri($uri);
         }
 
-        $this->uri = $uri;
-
         $this->setHost(static::getHost($uri));
+
+        $this->uri = $uri;
+        $this->method = static::filterMethod($method);
     }
 
     public function getRequestTarget()
