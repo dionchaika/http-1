@@ -138,8 +138,8 @@ abstract class Message implements MessageInterface
     public function getBody()
     {
         if (null === $this->body) {
-            $this->body = (new StreamFactory())
-                ->createStream();
+            $factory = new StreamFactory();
+            $this->body = $factory->createStream();
         }
 
         return $this->body;
