@@ -29,7 +29,18 @@ class Request extends Message implements RequestInterface
     protected $requestTarget;
 
     /**
-     * Filter HTTP method.
+     * Is the HTTP method standart.
+     *
+     * @param string $method
+     * @return bool
+     */
+    protected static function isStandartMethod($method)
+    {
+        return in_array($method, static::$standartMethods);
+    }
+
+    /**
+     * Filter an HTTP method.
      *
      * @param string $method
      * @return string
@@ -37,10 +48,9 @@ class Request extends Message implements RequestInterface
      */
     protected static function filterMethod($method)
     {
-        if (
-            in_array($method, static::$standartMethods) ||
-            preg_match(self::TOKEN, $method)
-        ) {
+        $standart = static::isStandartMethod($method);
+
+        if ($standart || preg_match(self::TOKEN, $method)) {
             return $method;
         }
 
@@ -48,7 +58,7 @@ class Request extends Message implements RequestInterface
     }
 
     /**
-     * Get "Host" header value from the given URI.
+     * Get the HTTP "Host" header value from the given URI.
      *
      * @param UriInterface $uri
      * @return string
@@ -85,6 +95,7 @@ class Request extends Message implements RequestInterface
         }
 
         $this->uri = $uri;
+
         $this->setHost(static::getHost($uri));
     }
 
@@ -137,7 +148,7 @@ class Request extends Message implements RequestInterface
         $request = clone $this;
         $request->uri = $uri;
 
-        if (! $preserveHost && '' === $this->getHeaderLine(self::HOST)) {
+        if (! $preserveHost || '' === $this->getHeaderLine(self::HOST)) {
             $request->setHost(static::getHost($uri));
         }
 
@@ -145,7 +156,7 @@ class Request extends Message implements RequestInterface
     }
 
     /**
-     * Set "Host" header to the request.
+     * Set the HTTP "Host" header.
      *
      * @param string $host
      * @return void
