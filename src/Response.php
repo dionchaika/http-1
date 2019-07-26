@@ -63,20 +63,6 @@ class Response extends Message implements ResponseInterface
     protected $reasonPhrase;
 
     /**
-     * Get the standart reason
-     * phrase for the given HTTP status code.
-     *
-     * @param int $code
-     * @return string
-     */
-    protected static function getStandartReasonPhrase($code)
-    {
-        return
-            isset(static::$standartReasonPhrases[$code])
-            ? static::$standartReasonPhrases[$code] : '';
-    }
-
-    /**
      * Filter an HTTP status code.
      *
      * @param int $code
@@ -93,6 +79,22 @@ class Response extends Message implements ResponseInterface
     }
 
     /**
+     * Get the standart reason
+     * phrase for the given HTTP status code.
+     *
+     * @param int $code
+     * @return string
+     */
+    protected static function getStandartReasonPhrase($code)
+    {
+        if (! isset(static::$standartReasonPhrases[$code])) {
+            return '';
+        }
+
+        return static::$standartReasonPhrases[$code];
+    }
+
+    /**
      * Initializes a new response instance.
      *
      * @param int $code
@@ -102,7 +104,9 @@ class Response extends Message implements ResponseInterface
      */
     public function __construct($code = 200, $reasonPhrase = '')
     {
-        $this->statusCode = static::filterStatusCode($code);
+        $code = static::filterStatusCode($code);
+
+        $this->statusCode = $code;
         $this->reasonPhrase = $reasonPhrase;
     }
 
@@ -113,9 +117,11 @@ class Response extends Message implements ResponseInterface
 
     public function withStatus($code, $reasonPhrase = '')
     {
+        $code = static::filterStatusCode($code);
+
         $response = clone $this;
 
-        $response->statusCode = static::filterStatusCode($code);
+        $response->statusCode = $code;
         $response->reasonPhrase = $reasonPhrase;
 
         return $response;
@@ -124,7 +130,7 @@ class Response extends Message implements ResponseInterface
     public function getReasonPhrase()
     {
         if ('' === $this->reasonPhrase) {
-            return $this->reasonPhrase;
+            return '';
         }
 
         return static::getStandartReasonPhrase($this->getStatusCode());
